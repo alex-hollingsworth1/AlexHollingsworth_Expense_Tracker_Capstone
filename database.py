@@ -1,0 +1,50 @@
+"""
+Database management and connection functionality.
+"""
+
+import sqlite3
+
+db = sqlite3.connect("expenses.db")
+cursor = db.cursor()
+
+# Create categories table to store expense/income categories
+db.execute(
+    """CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY,
+    name TEXT, type TEXT)"""
+)
+
+# Create expenses table to store expense transactions
+db.execute(
+    """CREATE TABLE IF NOT EXISTS expenses(id INTEGER PRIMARY KEY,
+    category_id INTEGER REFERENCES categories(id), amount REAL,
+    date TEXT, note TEXT)"""
+)
+
+
+# Create income table to store income transactions
+db.execute(
+    """CREATE TABLE IF NOT EXISTS income(id INTEGER PRIMARY KEY,
+    category_id INTEGER REFERENCES categories(id), amount REAL,
+    date TEXT, note TEXT)"""
+)
+
+# Create budgets table to store budget limits for categories
+db.execute(
+    """CREATE TABLE IF NOT EXISTS budgets(id INTEGER PRIMARY KEY,
+    category_id INTEGER REFERENCES categories(id), period TEXT,
+    amount REAL)"""
+)
+
+# Add note column to budgets table if it doesn't exist
+try:
+    cursor.execute("ALTER TABLE budgets ADD COLUMN note TEXT")
+    db.commit()
+except sqlite3.OperationalError:
+    # Column already exists, ignore the error
+    pass
+
+# Create goals table to store financial goals
+db.execute(
+    """CREATE TABLE IF NOT EXISTS goals(id INTEGER PRIMARY KEY,
+    text NAME, target REAL, deadline TEXT, notes TEXT,  status TEXT)"""
+)
