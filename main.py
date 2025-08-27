@@ -1,8 +1,11 @@
+#!/usr/bin/env python
 """This is a program to track expenses. Functionality includes the
 ability to add, delete, and view expenses, as well as adding and viewing
 income, setting and viewing a budget, setting financial goals and
 viewing progress towards them.
 """
+
+import os
 
 from transactions import (
     add_expense,
@@ -12,8 +15,15 @@ from transactions import (
     view_income,
     view_income_by_category,
 )
-from budgets import set_budget, view_budget
+from budgets import set_budget, view_budget_for_category
 from goals import set_financial_goals, progress_towards_goals
+
+
+def clear_screen():
+    """Clear the terminal screen."""
+    # TODO: Document in write-up - 'nt' = Windows (uses 'cls'),
+    # 'posix' = Mac/Linux (uses 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def view_menu(user_menu):
@@ -23,7 +33,7 @@ def view_menu(user_menu):
 
 
 def quit_and_exit():
-    print("quit_and_exit() function worked")
+    print("\nGoodbye!")
 
 
 menu_dict = {
@@ -48,7 +58,7 @@ menu_functions = {
     5: view_income,
     6: view_income_by_category,
     7: set_budget,
-    8: view_budget,
+    8: view_budget_for_category,
     9: set_financial_goals,
     10: progress_towards_goals,
     11: quit_and_exit,
@@ -61,6 +71,7 @@ def view_menu_again():
     ).lower()
     while True:
         if main_menu == "y":
+            clear_screen()
             return True
         elif main_menu == "n":
             return False
@@ -73,6 +84,7 @@ def view_menu_again():
 
 def main():
     """Main function to run the expense tracker program."""
+    clear_screen()
     user_continue = True
 
     while user_continue:

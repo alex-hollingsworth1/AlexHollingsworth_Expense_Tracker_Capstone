@@ -118,10 +118,11 @@ def confirm_or_edit(amount, expense_date, note, transaction_type):
 
 
 def insert_transaction(category_id, amount, date, note, transaction_type):
-    """Insert transaction into expenses or income table."""
+    """Insert transaction into expenses, income, or budgets table."""
     transaction_config = {
         "expense": {"table": "expenses", "name": "Expense"},
         "income": {"table": "income", "name": "Income"},
+        "budget": {"table": "budgets", "name": "Budget"},
     }
 
     config = transaction_config.get(
@@ -211,7 +212,7 @@ def choose_category_for_viewing():
     show_categories(cats)
     while True:
         try:
-            user_cat = input("Which category would you like to filter by? ")
+            user_cat = input("\nWhich category would you like to filter by? ")
             cid = int(user_cat)
             if cid in {c[0] for c in cats}:
                 return cid
@@ -226,8 +227,10 @@ def choose_category_for_viewing():
 def fetch_expenses_by_category(category_id):
     """Fetch expenses for a specific category."""
     cursor.execute(
-        """SELECT category_id, amount, date, note FROM expenses
-           WHERE category_id = ?""",
+        """SELECT e.id, c.name, e.amount, e.date, e.note
+        FROM expenses e
+        JOIN categories c ON e.category_id = c.id
+        WHERE e.category_id = ?""",
         (category_id,),
     )
     return cursor.fetchall()
@@ -236,8 +239,10 @@ def fetch_expenses_by_category(category_id):
 def fetch_income_by_category(category_id):
     """Fetch income for a specific category."""
     cursor.execute(
-        """SELECT category_id, amount, date, note FROM income
-           WHERE category_id = ?""",
+        """SELECT i.id, c.name, i.amount, i.date, i.note
+           FROM income i
+           JOIN categories c ON i.category_id = c.id
+           WHERE i.category_id = ?""",
         (category_id,),
     )
     return cursor.fetchall()
@@ -245,12 +250,20 @@ def fetch_income_by_category(category_id):
 
 def fetch_transaction_by_category(category_id, transaction_type):
     """Fetch transactions from expenses or income tables by category."""
-    table_name = "expenses" if transaction_type == "expense" else "income"
-    cursor.execute(
-        f"""SELECT category_id, amount, date, note FROM {table_name}
-           WHERE category_id = ?""",
-        (category_id,),
-    )
+    if transaction_type == "expense":
+        cursor.execute(
+            """SELECT e.id, c.name, e.amount, e.date, e.note
+                 FROM expenses e
+                 JOIN categories c ON e.category_id = c.id
+                 WHERE e.category_id = ?""",
+            (category_id,),
+        )
+    else:  # income
+        cursor.execute(
+            """SELECT category_id, amount, date, note FROM income
+                 WHERE category_id = ?""",
+            (category_id,),
+        )
     return cursor.fetchall()
 
 
@@ -259,7 +272,7 @@ def ask_continue_filtering():
     found."""
     while True:
         user_continue = input(
-            "No expenses found for selected criteria. "
+            "\nNo expenses found for selected criteria. "
             "Would you like to try filtering another category? y/n: "
         ).lower()
         if user_continue == "y":
@@ -281,7 +294,24 @@ def view_expenses():
             cid = choose_category_for_viewing()
             filtered_category = fetch_transaction_by_category(cid, "expense")
             if filtered_category:
-                print(filtered_category)
+                print("\n")
+                print(
+                    f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Date':<14} "
+                    f"{'Note':<25}"
+                )
+                print("-" * 75)
+                for (
+                    expense_id,
+                    name,
+                    amount,
+                    date,
+                    note,
+                ) in filtered_category:
+                    print(
+                        f"{expense_id:<5} {name:<15} ${amount:<11.2f} {date:<14} "
+                        f"{note or 'No note':<25}"
+                    )
+                print("\n")
             else:
                 if not ask_continue_filtering():
                     break
@@ -292,7 +322,24 @@ def view_expenses_by_category():
         cid = choose_category_for_viewing()
         filtered_category = fetch_expenses_by_category(cid)
         if filtered_category:
-            print(filtered_category)
+            print("\n")
+            print(
+                f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Date':<14} "
+                f"{'Note':<25}"
+            )
+            print("-" * 75)
+            for (
+                expense_id,
+                name,
+                amount,
+                date,
+                note,
+            ) in filtered_category:
+                print(
+                    f"{expense_id:<5} {name:<15} ${amount:<11.2f} {date:<14} "
+                    f"{note or 'No note':<25}"
+                )
+            print("\n")
             break
         else:
             if not ask_continue_filtering():
@@ -333,11 +380,53 @@ def view_income():
             cid = choose_category_for_viewing()
             filtered_category = fetch_transaction_by_category(cid, "income")
             if filtered_category:
-                print(filtered_category)
+                print("\n")
+                print(
+                    f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Date':<14} "
+                    f"{'Note':<25}"
+                )
+                print("-" * 75)
+                for (
+                    expense_id,
+                    name,
+                    amount,
+                    date,
+                    note,
+                ) in filtered_category:
+                    print(
+                        f"{expense_id:<5} {name:<15} ${amount:<11.2f} {date:<14} "
+                        f"{note or 'No note':<25}"
+                    )
+                print("\n")
             else:
                 if not ask_continue_filtering():
                     break
 
 
 def view_income_by_category():
-    print("view_income_by_category() function worked")
+    while True:
+        cid = choose_category_for_viewing()
+        filtered_category = fetch_income_by_category(cid)
+        if filtered_category:
+            print("\n")
+            print(
+                f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Date':<14} "
+                f"{'Note':<25}"
+            )
+            print("-" * 75)
+            for (
+                expense_id,
+                name,
+                amount,
+                date,
+                note,
+            ) in filtered_category:
+                print(
+                    f"{expense_id:<5} {name:<15} ${amount:<11.2f} {date:<14} "
+                    f"{note or 'No note':<25}"
+                )
+            print("\n")
+            break
+        else:
+            if not ask_continue_filtering():
+                break

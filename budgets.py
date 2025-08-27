@@ -11,7 +11,7 @@ from transactions import (
     get_amount,
     get_note,
     choose_category_for_viewing,
-    ask_continue_filtering
+    ask_continue_filtering,
 )
 from database import db, cursor
 
@@ -19,8 +19,10 @@ from database import db, cursor
 def fetch_budget_by_category(category_id):
     """Fetch budgets for a specific category."""
     cursor.execute(
-        """SELECT category_id, amount, period, note FROM budgets
-           WHERE category_id = ?""",
+        """SELECT b.id, c.name, b.amount, b.period, b.note
+           FROM budgets b
+           JOIN categories c ON b.category_id = c.id
+           WHERE b.category_id = ?""",
         (category_id,),
     )
     return cursor.fetchall()
@@ -64,7 +66,7 @@ def confirm_or_edit_budget(
     while True:
         print("Here is your summary:\n")
         print(
-            f"1. Amount - ${amount}\n2. Frequency - {frequency}\n "
+            f"1. Amount - ${amount}\n2. Frequency - {frequency}\n"
             f"3. Deadline Date - {deadline_date}\n4. "
             f"Note - {note}"
         )
@@ -115,18 +117,22 @@ def recurring_budget():
         print(f"{i} - {option}")
     user_choice = input(
         "Which of the above options would you like to choose? "
-        " Press 'Enter' to choose our default option of monthly"
+        " Press 'Enter' to choose our default option of monthly or the "
+        "number for a specific option."
     )
     if user_choice == "":
         final_user_choice = "monthly"
         return final_user_choice
 
     while True:
-        if user_choice in range(len(recurring_options)):
-            final_user_choice = recurring_options[user_choice]
+        if user_choice.isdigit() and int(user_choice) in range(
+            1, len(recurring_options) + 1
+        ):
+            final_user_choice = recurring_options[int(user_choice) - 1]
             return final_user_choice
         else:
             print("Invalid input. Please try again")
+            user_choice = input("Which option would you like to choose? ")
 
 
 def get_start_and_end_date():
@@ -169,8 +175,10 @@ def set_budget():
         budget_type = one_off_or_recurring(category_id)
 
         if budget_type == "one-off":
-            period = one_off_budget()
-            deadline_date = get_budget_end_date()
+            start_date, end_date = get_start_and_end_date()
+            period = (end_date - start_date).days
+            deadline_date = end_date.strftime("%Y-%m-%d")
+            # deadline_date = get_budget_end_date()
             frequency = "one-off"
         elif budget_type == "recurring":
             frequency = recurring_budget()
@@ -197,12 +205,39 @@ def set_budget():
         break
 
 
-def view_budget():
+def view_budget_for_category():
     while True:
         cid = choose_category_for_viewing()
         filtered_category = fetch_budget_by_category(cid)
         if filtered_category:
-            print(filtered_category)
+            print("\n")
+            print(
+                f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Period':<18} "
+                f"{'Note':<25}"
+            )
+            print("-" * 75)
+            for (
+                budget_id,
+                name,
+                amount,
+                period,
+                note,
+            ) in filtered_category:
+                print(
+                    f"{budget_id:<5} {name:<15} ${amount:<11.2f} {period:<21} "
+                    f"{note or 'No note':<25}"
+                )
+            print("\n")
+            break
+            # TODO: Format output display:
+            # - For recurring budgets: show period as 'weekly',
+            # 'monthly', etc.
+            #   and calculate expenses from current period start
+            # - For one-off budgets: show actual start/end dates
+            #   and calculate expenses within that date range
+            # - Display: budget amount, period type, total expenses
+            # in period,
+            #   remaining amount, and percentage used
             break
         else:
             if not ask_continue_filtering():

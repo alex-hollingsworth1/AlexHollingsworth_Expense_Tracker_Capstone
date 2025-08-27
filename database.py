@@ -46,5 +46,5 @@ except sqlite3.OperationalError:
 # Create goals table to store financial goals
 db.execute(
     """CREATE TABLE IF NOT EXISTS goals(id INTEGER PRIMARY KEY,
-    text NAME, target REAL, deadline TEXT, notes TEXT,  status TEXT)"""
+    name TEXT, target REAL, deadline TEXT, notes TEXT, status TEXT)"""
 )
