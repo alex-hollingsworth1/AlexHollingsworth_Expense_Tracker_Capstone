@@ -178,7 +178,6 @@ def set_budget():
             start_date, end_date = get_start_and_end_date()
             period = (end_date - start_date).days
             deadline_date = end_date.strftime("%Y-%m-%d")
-            # deadline_date = get_budget_end_date()
             frequency = "one-off"
         elif budget_type == "recurring":
             frequency = recurring_budget()
@@ -216,22 +215,19 @@ def view_budget_for_category():
                 f"{'Note':<25}"
             )
             print("-" * 75)
-            for (
-                budget_id,
-                name,
-                amount,
-                period,
-                note,
-            ) in filtered_category:
+
+            for budget_id, name, amount, period, note in filtered_category:
+                # Calculate display_period for each budget
+                if "one-off" in period:
+                    display_period = period.split("(")[0].strip()
+                else:
+                    display_period = period.split("(")[1].rstrip(")").title()
                 print(
-                    f"{budget_id:<5} {name:<15} ${amount:<11.2f} {period:<21} "
-                    f"{note or 'No note':<25}"
-                )
-            print("\n")
-            break
+                        f"{budget_id:<5} {name:<15} ${amount:<11.2f} "
+                        f"{display_period:<18} "
+                        f"{note or 'No note':<25}"
+                    )
             # TODO: Format output display:
-            # - For recurring budgets: show period as 'weekly',
-            # 'monthly', etc.
             #   and calculate expenses from current period start
             # - For one-off budgets: show actual start/end dates
             #   and calculate expenses within that date range
