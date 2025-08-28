@@ -32,7 +32,9 @@ def get_amount(transaction_type):
                 "payment here (in dollars): "
             )
             # Clean the input first (remove $, commas, spaces)
-            cleaned_input = user_input.replace("$", "").replace(",", "").strip()
+            cleaned_input = (
+                user_input.replace("$", "").replace(",", "").strip()
+            )
             amount = float(cleaned_input)
             if amount <= 0:
                 print("Amount must be greater than 0.")
@@ -144,6 +146,80 @@ def insert_transaction(category_id, amount, date, note, transaction_type):
     print(f"\n${amount:.2f} {config['name'].lower()} added successfully!")
 
 
+def update_expense():
+    """Update an existing expense amount."""
+    # Fetch all expenses with details
+    cursor.execute(
+        """
+        SELECT e.id, c.name, e.amount, e.date, e.note
+        FROM expenses e
+        JOIN categories c ON e.category_id = c.id
+        ORDER BY e.date DESC
+    """
+    )
+    expenses = cursor.fetchall()
+
+    # Check if there are any expenses
+    if not expenses:
+        print("No expenses found to update.")
+        return
+
+    # Show all expenses
+    print("\nAll Expenses:")
+    print(
+        f"{'ID':<5} {'Category':<15} {'Amount':<12} {'Date':<12} {'Note':<25}"
+    )
+    print("-" * 70)
+    for exp_id, category, amount, date, note in expenses:
+        print(
+            f"{exp_id:<5} {category:<15} ${amount:<11.2f} {date:<12} {note or 'No note':<25}"
+        )
+
+    # Get expense ID to update
+    while True:
+        try:
+            expense_id = int(input("\nEnter expense ID to update: "))
+            # Validate ID exists
+            if expense_id not in {e[0] for e in expenses}:
+                print(f"Expense ID {expense_id} not found. Please try again.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+    # Find the selected expense details
+    selected_expense = None
+    for expense in expenses:
+        if expense[0] == expense_id:
+            selected_expense = expense
+            break
+
+    # Unpack the expense details
+    _, category, current_amount, date, note = selected_expense
+
+    # Show current amount
+    print(f"\nCurrent amount for {category} expense: ${current_amount:.2f}")
+
+    # Get new amount
+    new_amount = get_amount("expense")
+
+    # Confirm update
+    confirm = input(
+        f"\nUpdate expense from ${current_amount:.2f} to ${new_amount:.2f}? (y/n): "
+    ).lower()
+    if confirm != "y":
+        print("Update cancelled.")
+        return
+
+    # Update the database
+    cursor.execute(
+        "UPDATE expenses SET amount = ? WHERE id = ?", (new_amount, expense_id)
+    )
+    db.commit()
+
+    print(f"Expense updated successfully! New amount: ${new_amount:.2f}")
+
+
 def add_expense():
     """Main function to add a new expense with full user interaction."""
     while True:
@@ -209,7 +285,31 @@ def fetch_raw_expenses():
     """
     )
     raw_expenses = cursor.fetchall()
-    return raw_expenses
+    for id, category_id, category_name, amount, date, note in raw_expenses:
+        print(f"ID - {id}")
+        print(f"Name - {category_name}")
+        print(f"Expense Amount - {amount}")
+        print(f"Date - {date}")
+        print(f"Note - {note}")
+
+
+def fetch_raw_income():
+    """Fetch all income from the database."""
+    cursor.execute(
+        """
+        SELECT i.id, i.category_id, c.name as category_name, i.amount,
+        i.date, i.note
+        FROM income i
+        JOIN categories c ON i.category_id = c.id
+    """
+    )
+    raw_income = cursor.fetchall()
+    for id, category_id, category_name, amount, date, note in raw_income:
+        print(f"ID - {id}")
+        print(f"Name - {category_name}")
+        print(f"Income Amount - {amount}")
+        print(f"Date - {date}")
+        print(f"Note - {note}")
 
 
 def choose_category_for_viewing():
@@ -380,7 +480,7 @@ def view_income():
     while True:
         filter_choice = filter_income()
         if not filter_choice:
-            fetch_raw_expenses()
+            fetch_raw_income()
             break
         else:
             cid = choose_category_for_viewing()

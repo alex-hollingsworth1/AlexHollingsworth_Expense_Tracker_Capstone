@@ -6,6 +6,7 @@ import sqlite3
 
 db = sqlite3.connect("expenses.db")
 cursor = db.cursor()
+cursor.execute("PRAGMA foreign_keys = ON")
 
 # Create categories table to store expense/income categories
 db.execute(
