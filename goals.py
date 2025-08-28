@@ -50,7 +50,7 @@ def update_progress(goal_id):
     cursor.execute(
         """SELECT id, name, target, deadline, notes, status FROM goals
            WHERE id = ?""",
-        (goal_id),
+        (goal_id,)
     )
     goal_details = cursor.fetchone()
 
@@ -145,7 +145,7 @@ def confirm_or_edit_goals(
     while True:
         print("Here is your summary:\n")
         print(
-            f"1. Goal name - ${goal_name}\n2. Target - {goal_amount}\n "
+            f"1. Goal name - ${goal_name}\n2. Target - {goal_amount:.2f}\n "
             f"3. Deadline Date - {goal_deadline}\n4. "
             f"Notes - {goal_notes}\n5. Status - {goal_status}"
         )

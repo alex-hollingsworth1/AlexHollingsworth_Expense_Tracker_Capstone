@@ -15,7 +15,7 @@ from transactions import (
     view_income,
     view_income_by_category,
 )
-from budgets import set_budget, view_budget_for_category
+from budgets import set_budget, view_budget_for_category, edit_budget
 from goals import set_financial_goals, progress_towards_goals
 
 
@@ -47,7 +47,8 @@ menu_dict = {
     8: "View budget for a category",
     9: "Set financial goals",
     10: "View progress towards financial goals",
-    11: "Quit",
+    11: "Edit/Update budget",
+    12: "Quit",
 }
 
 menu_functions = {
@@ -61,13 +62,14 @@ menu_functions = {
     8: view_budget_for_category,
     9: set_financial_goals,
     10: progress_towards_goals,
-    11: quit_and_exit,
+    11: edit_budget,
+    12: quit_and_exit,
 }
 
 
 def view_menu_again():
     main_menu = input(
-        "Would you like to view the main menu again? y/n: "
+        "\nWould you like to view the main menu again? y/n: "
     ).lower()
     while True:
         if main_menu == "y":
@@ -96,8 +98,9 @@ def main():
                     " the relevant function: "
                 )
             )
+            print()  # Add blank line for better spacing
             if user_select in menu_functions:
-                if user_select == 11:  # Quit option
+                if user_select == 12:  # Quit option
                     user_continue = False
                 else:
                     menu_functions[user_select]()

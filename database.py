@@ -32,16 +32,9 @@ db.execute(
 db.execute(
     """CREATE TABLE IF NOT EXISTS budgets(id INTEGER PRIMARY KEY,
     category_id INTEGER REFERENCES categories(id), period TEXT,
-    amount REAL)"""
+    amount REAL, note TEXT, dates TEXT, remaining_amount REAL,
+    percentage REAL)"""
 )
-
-# Add note column to budgets table if it doesn't exist
-try:
-    cursor.execute("ALTER TABLE budgets ADD COLUMN note TEXT")
-    db.commit()
-except sqlite3.OperationalError:
-    # Column already exists, ignore the error
-    pass
 
 # Create goals table to store financial goals
 db.execute(

@@ -27,12 +27,13 @@ def get_amount(transaction_type):
     """Get and validate amount input from user."""
     while True:
         try:
-            amount = float(
-                input(
-                    f"Please type the amount for the {transaction_type} "
-                    "payment here: "
-                )
+            user_input = input(
+                f"Please type the amount for the {transaction_type} "
+                "payment here (in dollars): "
             )
+            # Clean the input first (remove $, commas, spaces)
+            cleaned_input = user_input.replace("$", "").replace(",", "").strip()
+            amount = float(cleaned_input)
             if amount <= 0:
                 print("Amount must be greater than 0.")
                 continue
@@ -43,16 +44,21 @@ def get_amount(transaction_type):
 
 def get_note():
     """Get optional note from user."""
-    user_optional_note = input(
-        "Would you like to write an optional note? y/n: "
-    ).lower()
-    if user_optional_note == "y":
-        return input("Please write your optional note: ")
-    elif user_optional_note == "n":
-        return ""
-    else:
-        print("Invalid option, no note will be added.")
-        return ""
+    while True:
+        user_optional_note = input(
+            "Would you like to write an optional note? y/n: "
+        ).lower()
+        if user_optional_note == "y":
+            while True:
+                user_note = input("Please write your optional note: ")
+                if len(user_note) > 30:
+                    print("Notes must be 30 characters max.")
+                else:
+                    return user_note
+        elif user_optional_note == "n":
+            return ""
+        else:
+            print("Invalid option. Please enter 'y' or 'n'.")
 
 
 def fetch_categories():
@@ -63,7 +69,7 @@ def fetch_categories():
 
 def show_categories(category_list):
     """Display the list of categories to the user."""
-    print("Select a category (or N to create a new one):\n")
+    print("Select a category (or N to create a new one):")
     for cat_id, name in category_list:
         print(f"{cat_id}: {name}")
 
@@ -95,7 +101,7 @@ def confirm_or_edit(amount, expense_date, note, transaction_type):
     while True:
         print("Here is your summary:\n")
         print(
-            f"1. Amount - ${amount}\n2. Date Added - {expense_date}\n3. "
+            f"1. Amount - ${amount:.2f}\n2. Date Added - {expense_date}\n3. "
             f"Note - {note}"
         )
         # COULD IMPLEMENT IT BETTER WITH MULTIPLE DIFFERENT USE CASES
@@ -203,7 +209,7 @@ def fetch_raw_expenses():
     """
     )
     raw_expenses = cursor.fetchall()
-    print(raw_expenses)
+    return raw_expenses
 
 
 def choose_category_for_viewing():
