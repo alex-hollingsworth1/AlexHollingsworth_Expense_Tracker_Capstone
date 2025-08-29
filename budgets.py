@@ -518,7 +518,7 @@ def set_budget():
                 percentage,
             )
         else:
-            print("Income cancelled. Returning to main menu.")
+            print("Budget cancelled. Returning to main menu.")
         break
 
 

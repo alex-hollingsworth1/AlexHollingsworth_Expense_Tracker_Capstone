@@ -4,13 +4,7 @@ Transaction management functionality.
 
 from database import db, cursor
 from categories import add_category
-from utils import get_amount, get_date, get_note
-
-
-def fetch_categories():
-    """Fetch all categories from the database."""
-    cursor.execute("SELECT id, name FROM categories")
-    return cursor.fetchall()
+from utils import get_amount, get_date, get_note, print_raw_transactions_table
 
 
 def show_categories(category_list):
@@ -139,7 +133,7 @@ def update_expense():
             selected_expense = expense
             break
 
-    # Safety check (should never happen due to validation above)
+    # Validation above ensures this exists, but linter needs this check
     if selected_expense is None:
         print("Error: Could not find the selected expense.")
         return
@@ -236,12 +230,7 @@ def fetch_raw_expenses():
     """
     )
     raw_expenses = cursor.fetchall()
-    for id, category_id, category_name, amount, date, note in raw_expenses:
-        print(f"ID - {id}")
-        print(f"Name - {category_name}")
-        print(f"Expense Amount - {amount}")
-        print(f"Date - {date}")
-        print(f"Note - {note}")
+    print_raw_transactions_table(raw_expenses, "expense")
 
 
 def fetch_raw_income():
@@ -255,12 +244,7 @@ def fetch_raw_income():
     """
     )
     raw_income = cursor.fetchall()
-    for id, category_id, category_name, amount, date, note in raw_income:
-        print(f"ID - {id}")
-        print(f"Name - {category_name}")
-        print(f"Income Amount - {amount}")
-        print(f"Date - {date}")
-        print(f"Note - {note}")
+    print_raw_transactions_table(raw_income, "income")
 
 
 def choose_category_for_viewing():

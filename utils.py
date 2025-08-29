@@ -2,7 +2,25 @@
 Utility functions and helper methods.
 """
 
+from database import cursor
 from datetime import datetime
+
+
+def print_raw_transactions_table(transactions, transaction_type):
+    """Print transactions in table format."""
+    if not transactions:
+        print(f"No {transaction_type}s found.")
+        return
+
+    print(
+        f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Date':<14} " f"{'Note':<25}"
+    )
+    print("-" * 75)
+    for id, category_id, category_name, amount, date, note in transactions:
+        print(
+            f"{id:<5} {category_name:<15} ${amount:<11.2f} "
+            f"{date:<14} {note or 'No note':<25}"
+        )
 
 
 def get_date(transaction_type):
@@ -59,3 +77,9 @@ def get_note():
             return ""
         else:
             print("Invalid option. Please enter 'y' or 'n'.")
+
+
+def fetch_categories():
+    """Fetch all categories from the database."""
+    cursor.execute("SELECT id, name FROM categories")
+    return cursor.fetchall()
