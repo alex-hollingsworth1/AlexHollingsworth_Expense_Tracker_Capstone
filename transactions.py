@@ -2,65 +2,9 @@
 Transaction management functionality.
 """
 
-from datetime import datetime
 from database import db, cursor
 from categories import add_category
-
-
-def get_date(transaction_type):
-    """Get and validate date input from user."""
-    while True:
-        date_str = input(
-            f"Please input a date for this {transaction_type}. Press enter"
-            " for today's date, or enter a date in format YYYY-MM-DD: "
-        )
-        if date_str == "":
-            return datetime.today().strftime("%Y-%m-%d")
-        try:
-            datetime.strptime(date_str, "%Y-%m-%d")
-            return date_str
-        except ValueError:
-            print("Invalid date. Please try again (format: YYYY-MM-DD).")
-
-
-def get_amount(transaction_type):
-    """Get and validate amount input from user."""
-    while True:
-        try:
-            user_input = input(
-                f"Please type the amount for the {transaction_type} "
-                "payment here (in dollars): "
-            )
-            # Clean the input first (remove $, commas, spaces)
-            cleaned_input = (
-                user_input.replace("$", "").replace(",", "").strip()
-            )
-            amount = float(cleaned_input)
-            if amount <= 0:
-                print("Amount must be greater than 0.")
-                continue
-            return amount
-        except ValueError:
-            print("Invalid amount. Please enter a valid number.")
-
-
-def get_note():
-    """Get optional note from user."""
-    while True:
-        user_optional_note = input(
-            "Would you like to write an optional note? y/n: "
-        ).lower()
-        if user_optional_note == "y":
-            while True:
-                user_note = input("Please write your optional note: ")
-                if len(user_note) > 30:
-                    print("Notes must be 30 characters max.")
-                else:
-                    return user_note
-        elif user_optional_note == "n":
-            return ""
-        else:
-            print("Invalid option. Please enter 'y' or 'n'.")
+from utils import get_amount, get_date, get_note
 
 
 def fetch_categories():
@@ -172,7 +116,8 @@ def update_expense():
     print("-" * 70)
     for exp_id, category, amount, date, note in expenses:
         print(
-            f"{exp_id:<5} {category:<15} ${amount:<11.2f} {date:<12} {note or 'No note':<25}"
+            f"{exp_id:<5} {category:<15} ${amount:<11.2f} {date:<12} "
+            f"{note or 'No note':<25}"
         )
 
     # Get expense ID to update
@@ -194,6 +139,11 @@ def update_expense():
             selected_expense = expense
             break
 
+    # Safety check (should never happen due to validation above)
+    if selected_expense is None:
+        print("Error: Could not find the selected expense.")
+        return
+
     # Unpack the expense details
     _, category, current_amount, date, note = selected_expense
 
@@ -205,7 +155,8 @@ def update_expense():
 
     # Confirm update
     confirm = input(
-        f"\nUpdate expense from ${current_amount:.2f} to ${new_amount:.2f}? (y/n): "
+        f"\nUpdate expense from ${current_amount:.2f} to "
+        f"${new_amount:.2f}? (y/n): "
     ).lower()
     if confirm != "y":
         print("Update cancelled.")
@@ -414,8 +365,8 @@ def view_expenses():
                     note,
                 ) in filtered_category:
                     print(
-                        f"{expense_id:<5} {name:<15} ${amount:<11.2f} {date:<14} "
-                        f"{note or 'No note':<25}"
+                        f"{expense_id:<5} {name:<15} ${amount:<11.2f} "
+                        f"{date:<14} {note or 'No note':<25}"
                     )
                 print("\n")
             else:
@@ -500,8 +451,8 @@ def view_income():
                     note,
                 ) in filtered_category:
                     print(
-                        f"{expense_id:<5} {name:<15} ${amount:<11.2f} {date:<14} "
-                        f"{note or 'No note':<25}"
+                        f"{expense_id:<5} {name:<15} ${amount:<11.2f} "
+                        f"{date:<14} {note or 'No note':<25}"
                     )
                 print("\n")
             else:

@@ -15,7 +15,12 @@ from transactions import (
     view_income,
     view_income_by_category,
 )
-from budgets import set_budget, view_budget_for_category, edit_budget
+from budgets import (
+    set_budget,
+    view_budget_for_category,
+    edit_budget,
+    calculate_overall_budget,
+)
 from goals import set_financial_goals, progress_towards_goals
 
 
@@ -47,8 +52,9 @@ menu_dict = {
     8: "View budget for a category",
     9: "Set financial goals",
     10: "View progress towards financial goals",
-    11: "Edit/Update budget",
-    12: "Quit",
+    11: "Calculate overall budget",
+    12: "Edit/Update budget",
+    13: "Quit",
 }
 
 menu_functions = {
@@ -62,8 +68,9 @@ menu_functions = {
     8: view_budget_for_category,
     9: set_financial_goals,
     10: progress_towards_goals,
-    11: edit_budget,
-    12: quit_and_exit,
+    11: calculate_overall_budget,
+    12: edit_budget,
+    13: quit_and_exit,
 }
 
 
@@ -100,7 +107,7 @@ def main():
             )
             print()  # Add blank line for better spacing
             if user_select in menu_functions:
-                if user_select == 12:  # Quit option
+                if user_select == 13:  # Quit option
                     user_continue = False
                 else:
                     menu_functions[user_select]()

@@ -16,6 +16,32 @@ from transactions import (
 from database import db, cursor
 
 
+def calculate_overall_budget():
+    """Calculate overall budget."""
+    cursor.execute("""SELECT SUM(amount) FROM income""")
+    result = cursor.fetchone()
+    total_income = result[0] if result[0] is not None else 0
+
+    cursor.execute("""SELECT SUM(amount) FROM expenses""")
+    result = cursor.fetchone()
+    total_expenses = result[0] if result[0] is not None else 0
+
+    total_budget = total_income - total_expenses
+
+    print("\n=== BUDGET CALCULATION ===")
+    print(f"Total Income:    ${total_income:.2f}")
+    print(f"Total Expenses:  ${total_expenses:.2f}")
+    print("-" * 30)
+    print(f"Budget Balance:  ${total_budget:.2f}")
+
+    if total_budget > 0:
+        print(f"You have ${total_budget:.2f} remaining")
+    elif total_budget < 0:
+        print(f"You are over budget by ${abs(total_budget):.2f}")
+    else:
+        print("You've broken even")
+
+
 def get_current_spending():
     while True:
         try:
@@ -28,8 +54,6 @@ def get_current_spending():
                 return current_spending
         except ValueError:
             print("Invalid option. Please try again.")
-
-
 
 
 def calc_percentage(current_spending, total_amount):
@@ -142,7 +166,8 @@ def choose_field_to_edit():
 def edit_budget_field(current_budget, field_choice):
     """Edit specific field based on user choice."""
     # current_budget tuple structure:
-    # (id, name, amount, dates, period, note, remaining_amount, percentage, category_id)
+    # (id, name, amount, dates, period, note, remaining_amount,
+    # percentage, category_id)
     (
         budget_id,
         name,
@@ -217,7 +242,8 @@ def edit_budget_field(current_budget, field_choice):
 def update_budget_in_database(budget_data):
     """Update budget record in database."""
     # budget_data tuple structure:
-    # (id, name, amount, dates, period, note, remaining_amount, percentage, category_id)
+    # (id, name, amount, dates, period, note, remaining_amount,
+    # percentage, category_id)
     (
         budget_id,
         name,
@@ -273,9 +299,13 @@ def insert_budget(
         )
         db.commit()
     else:
-        dates = f"{start_date.strftime('%Y-%m-%d')} - {end_date.strftime('%Y-%m-%d')}"
+        dates = (
+            f"{start_date.strftime('%Y-%m-%d')} - "
+            f"{end_date.strftime('%Y-%m-%d')}"
+        )
         cursor.execute(
-            """INSERT INTO budgets (category_id, amount, period, note, dates, remaining_amount, percentage)
+            """INSERT INTO budgets (category_id, amount, period, note,
+            dates, remaining_amount, percentage)
             VALUES (?, ?, ?, ?, ?, ?, ?)""",
             (
                 category_id,
@@ -453,6 +483,12 @@ def set_budget():
             period = 0  # No specific period for recurring
             start_date = get_start_date_only()
             end_date = None  # No end date for recurring budgets
+        else:
+            # This should never happen as one_off_or_recurring only
+            # returns "one-off" or "recurring", but this satisfies the
+            # linter
+            print(f"Error: Invalid budget type '{budget_type}'")
+            continue
 
         amount, note, remaining_amount, percentage = collect_budget_fields(
             budget_type
@@ -493,8 +529,9 @@ def view_budget_for_category():
         if filtered_category:
             print("\n")
             print(
-                f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Dates':<30} {'Period':<18} "
-                f"{'Note':<25} {'Remaining Amount':<20} {'Percentage':<10}"
+                f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Dates':<30} "
+                f"{'Period':<18} {'Note':<25} {'Remaining Amount':<20} "
+                f"{'Percentage':<10}"
             )
             print("-" * 150)
 

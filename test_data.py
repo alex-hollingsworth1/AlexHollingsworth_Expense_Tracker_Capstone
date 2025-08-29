@@ -4,14 +4,13 @@ test_data.py - Populate the expense tracker database with test data
 """
 
 import sqlite3
-from datetime import datetime, timedelta
-import random
 
 # Connect to database
 db = sqlite3.connect("expenses.db")
 cursor = db.cursor()
 
-# Clear existing test data (optional - comment out to keep existing data)
+# Clear existing test data (optional - comment out to keep existing
+# data)
 print("Clearing existing data...")
 cursor.execute("DELETE FROM expenses")
 cursor.execute("DELETE FROM income")
@@ -56,7 +55,8 @@ expense_data = [
 
 for cat_id, amount, date, note in expense_data:
     cursor.execute(
-        "INSERT INTO expenses (category_id, amount, date, note) VALUES (?, ?, ?, ?)",
+        """INSERT INTO expenses (category_id, amount, date, note)
+           VALUES (?, ?, ?, ?)""",
         (cat_id, amount, date, note),
     )
 
@@ -69,7 +69,8 @@ income_data = [
 
 for cat_id, amount, date, note in income_data:
     cursor.execute(
-        "INSERT INTO income (category_id, amount, date, note) VALUES (?, ?, ?, ?)",
+        """INSERT INTO income (category_id, amount, date, note)
+           VALUES (?, ?, ?, ?)""",
         (cat_id, amount, date, note),
     )
 
@@ -98,7 +99,7 @@ budget_data = [
 
 for cat_id, amount, period, note, dates, remaining, percentage in budget_data:
     cursor.execute(
-        """INSERT INTO budgets (category_id, amount, period, note, dates, 
+        """INSERT INTO budgets (category_id, amount, period, note, dates,
            remaining_amount, percentage) VALUES (?, ?, ?, ?, ?, ?, ?)""",
         (cat_id, amount, period, note, dates, remaining, percentage),
     )
@@ -113,7 +114,7 @@ goals_data = [
 
 for name, target, deadline, notes, status in goals_data:
     cursor.execute(
-        """INSERT INTO goals (name, target, deadline, notes, status) 
+        """INSERT INTO goals (name, target, deadline, notes, status)
            VALUES (?, ?, ?, ?, ?)""",
         (name, target, deadline, notes, status),
     )
