@@ -3,17 +3,15 @@ Budget management and tracking functionality.
 """
 
 from datetime import datetime
-
-from transactions import (
+from categories import (
     fetch_categories,
     show_categories,
     choose_category,
-    get_amount,
-    get_note,
     choose_category_for_viewing,
-    ask_continue_filtering,
 )
+from transactions import ask_continue_filtering
 from database import db, cursor
+from utils import get_amount, get_note
 
 
 def calculate_overall_budget():
@@ -89,7 +87,7 @@ def fetch_all_budgets():
         b.remaining_amount, b.percentage, b.category_id
            FROM budgets b
            JOIN categories c ON b.category_id = c.id
-           ORDER BY c.name"""
+           ORDER BY c.id"""
     )
     return cursor.fetchall()
 
@@ -98,10 +96,10 @@ def choose_budget_to_edit(budget_list):
     """Display budgets and let user choose one to edit."""
     print("\nSelect a budget to edit:")
     print(
-        f"{'ID':<4} {'Category':<15} {'Amount':<12} {'Dates':<25} "
-        f"{'Used':<8} {'Status'}"
+        f"{'ID':<4} {'Category':<15} {'Amount':<12} {'Dates':<30} "
+        f"{'Notes':<30} {'Used':<8} {'Status'}"
     )
-    print("-" * 75)
+    print("-" * 120)
 
     for (
         bid,
@@ -122,8 +120,8 @@ def choose_budget_to_edit(budget_list):
 
         print(
             f"{bid:<4} {name:<15} ${amount:<11.2f} "
-            f"{dates or 'No dates':<25} {f'{percentage:.1f}%':<8} "
-            f"{display_period}"
+            f"{dates or 'No dates':<30} {note or 'No notes':<30} "
+            f"{f'{percentage:.1f}%':<8} {display_period}"
         )
 
     while True:
@@ -341,7 +339,7 @@ def collect_budget_fields(transaction_type):
     note = get_note()
     current_spending = get_current_spending()
     remaining_amount = calc_remaining_amount(
-        current_spending=current_spending, target=amount
+        target=amount, current_spending=current_spending
     )
     percentage = calc_percentage(
         current_spending=current_spending, total_amount=amount
@@ -530,7 +528,7 @@ def view_budget_for_category():
             print("\n")
             print(
                 f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Dates':<30} "
-                f"{'Period':<18} {'Note':<25} {'Remaining Amount':<20} "
+                f"{'Period':<14} {'Note':<25} {'Remaining Amount':<20} "
                 f"{'Percentage':<10}"
             )
             print("-" * 150)
@@ -552,7 +550,7 @@ def view_budget_for_category():
                     display_period = period.split("(")[1].rstrip(")").title()
                 print(
                     f"{budget_id:<5} {name:<15} ${amount:<11.2f} "
-                    f"{dates or 'No dates':<30} {display_period:<18} "
+                    f"{dates or 'No dates':<30} {display_period:<14} "
                     f"{note or 'No note':<25} {f'{remaining_amount:.2f}':<20} "
                     f"{f'{percentage:.2f}%':<10}"
                 )

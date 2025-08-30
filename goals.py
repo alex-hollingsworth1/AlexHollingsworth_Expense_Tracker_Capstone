@@ -1,32 +1,9 @@
 """
 Financial goal setting and tracking functionality.
-
-PROJECT REQUIREMENTS - Expense & Budget Tracker:
-✅ Completed:
-- Add new expense/income categories to database
-- Track spending and income
-- View expense/income categories
-- View expenses/income by category
-- Set budget for a category
-- View budget for a category
-- Set financial goals
-- View progress towards financial goals (via prompting)
-- SQLite database connection and tables
-- Menu system (1-11 options)
-
-🔧 To verify/consider:
-- Update an expense amount (may need separate function)
-- Delete expense/income categories (have add, may need delete)
-- Calculate user's budget based on income and expenses
-
-NOTE: For saved_amount in goals - requirements don't explicitly need
-database storage. Current prompting approach meets "View progress"
-requirement. Could enhance with database storage to show UPDATE skills
-if time permits.
 """
 
 from datetime import datetime
-from transactions import get_note
+from utils import get_note
 from database import db, cursor
 
 
@@ -145,7 +122,7 @@ def confirm_or_edit_goals(
     while True:
         print("Here is your summary:\n")
         print(
-            f"1. Goal name - ${goal_name}\n2. Target - {goal_amount:.2f}\n "
+            f"1. Goal name - {goal_name}\n2. Target - ${goal_amount:.2f}\n "
             f"3. Deadline Date - {goal_deadline}\n4. "
             f"Notes - {goal_notes}\n5. Status - {goal_status}"
         )

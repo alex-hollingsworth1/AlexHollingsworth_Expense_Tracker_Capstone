@@ -3,29 +3,13 @@ Transaction management functionality.
 """
 
 from database import db, cursor
-from categories import add_category
+from categories import (
+    fetch_categories,
+    show_categories,
+    choose_category,
+    choose_category_for_viewing,
+)
 from utils import get_amount, get_date, get_note, print_raw_transactions_table
-
-
-def show_categories(category_list):
-    """Display the list of categories to the user."""
-    print("Select a category (or N to create a new one):")
-    for cat_id, name in category_list:
-        print(f"{cat_id}: {name}")
-
-
-def choose_category(category_list):
-    """Get user's category choice and validate it."""
-    user_input = input("Please type your choice: ").strip()
-    if user_input.upper() == "N":
-        add_category()
-        return None  # signal: categories changed, reshow menu
-    if user_input.isdigit():
-        cid = int(user_input)
-        if cid in {c[0] for c in category_list}:
-            return cid
-    print("Invalid input. Enter a valid category number or 'N'.")
-    return None
 
 
 def collect_fields(transaction_type):
@@ -44,8 +28,6 @@ def confirm_or_edit(amount, expense_date, note, transaction_type):
             f"1. Amount - ${amount:.2f}\n2. Date Added - {expense_date}\n3. "
             f"Note - {note}"
         )
-        # COULD IMPLEMENT IT BETTER WITH MULTIPLE DIFFERENT USE CASES
-        # FOR OTHER FUNCTIONS
         choice = input(
             "Enter Y to confirm, N to cancel, or 1-3 to edit: "
         ).lower()
@@ -84,85 +66,120 @@ def insert_transaction(category_id, amount, date, note, transaction_type):
     print(f"\n${amount:.2f} {config['name'].lower()} added successfully!")
 
 
-def update_expense():
+def update_transaction(transaction_type):
     """Update an existing expense amount."""
-    # Fetch all expenses with details
-    cursor.execute(
-        """
-        SELECT e.id, c.name, e.amount, e.date, e.note
-        FROM expenses e
-        JOIN categories c ON e.category_id = c.id
-        ORDER BY e.date DESC
-    """
-    )
-    expenses = cursor.fetchall()
+    # Map transaction type to table and display name
+    type_config = {
+        "expense": {"table": "expenses", "name": "Expense"},
+        "income": {"table": "income", "name": "Income"},
+    }
 
-    # Check if there are any expenses
-    if not expenses:
-        print("No expenses found to update.")
+    if transaction_type not in type_config:
+        print("Invalid transaction type.")
         return
 
-    # Show all expenses
-    print("\nAll Expenses:")
+    config = type_config[transaction_type]
+
+    # Fetch all transactions - note the table name is hardcoded in each
+    # query
+    if transaction_type == "expense":
+        cursor.execute(
+            """
+            SELECT e.id, c.name, e.amount, e.date, e.note
+            FROM expenses e
+            JOIN categories c ON e.category_id = c.id
+            ORDER BY e.date DESC
+        """
+        )
+    else:  # income
+        cursor.execute(
+            """
+            SELECT i.id, c.name, i.amount, i.date, i.note
+            FROM income i
+            JOIN categories c ON i.category_id = c.id
+            ORDER BY i.date DESC
+        """
+        )
+    transactions = cursor.fetchall()
+
+    # Check if there are any transactions
+    if not transactions:
+        print(f"No {config['name'].lower()} found to update.")
+        return
+
     print(
         f"{'ID':<5} {'Category':<15} {'Amount':<12} {'Date':<12} {'Note':<25}"
     )
     print("-" * 70)
-    for exp_id, category, amount, date, note in expenses:
+    for id, category, amount, date, note in transactions:
         print(
-            f"{exp_id:<5} {category:<15} ${amount:<11.2f} {date:<12} "
+            f"{id:<5} {category:<15} ${amount:<11.2f} {date:<12} "
             f"{note or 'No note':<25}"
         )
 
-    # Get expense ID to update
+    # Get transaction ID to update
     while True:
         try:
-            expense_id = int(input("\nEnter expense ID to update: "))
+            transaction_id = int(input("\nEnter ID to update: "))
             # Validate ID exists
-            if expense_id not in {e[0] for e in expenses}:
-                print(f"Expense ID {expense_id} not found. Please try again.")
+            if transaction_id not in {e[0] for e in transactions}:
+                print(
+                    f"{config['name']} ID {transaction_id} not found. "
+                    "Please try again."
+                )
                 continue
             break
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-    # Find the selected expense details
+    # Find the selected transaction details
     selected_expense = None
-    for expense in expenses:
-        if expense[0] == expense_id:
-            selected_expense = expense
+    for transaction in transactions:
+        if transaction[0] == transaction_id:
+            selected_expense = transaction
             break
 
     # Validation above ensures this exists, but linter needs this check
     if selected_expense is None:
-        print("Error: Could not find the selected expense.")
+        print(f"Error: Could not find the selected {config['name'].lower()}.")
         return
 
     # Unpack the expense details
     _, category, current_amount, date, note = selected_expense
 
     # Show current amount
-    print(f"\nCurrent amount for {category} expense: ${current_amount:.2f}")
+    print(
+        f"\nCurrent amount for {category} {config['name'].lower()}: "
+        f"${current_amount:.2f}"
+    )
 
     # Get new amount
-    new_amount = get_amount("expense")
+    new_amount = get_amount(config["name"].lower())
 
     # Confirm update
     confirm = input(
-        f"\nUpdate expense from ${current_amount:.2f} to "
+        f"\nUpdate {config['name'].lower()} from ${current_amount:.2f} to "
         f"${new_amount:.2f}? (y/n): "
     ).lower()
     if confirm != "y":
         print("Update cancelled.")
         return
 
-    # Update the database
-    cursor.execute(
-        "UPDATE expenses SET amount = ? WHERE id = ?", (new_amount, expense_id)
-    )
+    if transaction_type == "expense":
+        cursor.execute(
+            "UPDATE expenses SET amount = ? WHERE id = ?",
+            (new_amount, transaction_id),
+        )
+    else:
+        cursor.execute(
+            "UPDATE income SET amount = ? WHERE id = ?",
+            (new_amount, transaction_id),
+        )
     db.commit()
 
-    print(f"Expense updated successfully! New amount: ${new_amount:.2f}")
+    print(
+        f"{config['name']} updated successfully! New amount: ${new_amount:.2f}"
+    )
 
 
 def add_expense():
@@ -245,24 +262,6 @@ def fetch_raw_income():
     )
     raw_income = cursor.fetchall()
     print_raw_transactions_table(raw_income, "income")
-
-
-def choose_category_for_viewing():
-    """Get user's choice of category for viewing expenses."""
-    cats = fetch_categories()
-    show_categories(cats)
-    while True:
-        try:
-            user_cat = input("\nWhich category would you like to filter by? ")
-            cid = int(user_cat)
-            if cid in {c[0] for c in cats}:
-                return cid
-            else:
-                print(
-                    "Invalid category ID. Please choose from the list above."
-                )
-        except ValueError:
-            print("Invalid entry, please enter a number.")
 
 
 def fetch_expenses_by_category(category_id):

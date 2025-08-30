@@ -4,13 +4,50 @@ Category management for financial transactions and budgets.
 
 from database import db, cursor
 
-from transactions import (
-    fetch_categories,
-    show_categories,
-)
+
+def choose_category(category_list):
+    """Get user's category choice and validate it."""
+    user_input = input("Please type your choice: ").strip()
+    if user_input.upper() == "N":
+        add_category()
+        return None  # signal: categories changed, reshow menu
+    if user_input.isdigit():
+        cid = int(user_input)
+        if cid in {c[0] for c in category_list}:
+            return cid
+    print("Invalid input. Enter a valid category number or 'N'.")
+    return None
 
 
+def choose_category_for_viewing():
+    """Get user's choice of category for viewing transactions."""
+    cats = fetch_categories()
+    show_categories(cats)
+    while True:
+        try:
+            user_cat = input("\nWhich category would you like to filter by? ")
+            cid = int(user_cat)
+            if cid in {c[0] for c in cats}:
+                return cid
+            else:
+                print(
+                    "Invalid category ID. Please choose from the list above."
+                )
+        except ValueError:
+            print("Invalid entry, please enter a number.")
 
+
+def show_categories(category_list):
+    """Display the list of categories to the user."""
+    print("Select a category (or N to create a new one):")
+    for cat_id, name in category_list:
+        print(f"{cat_id}: {name}")
+
+
+def fetch_categories():
+    """Fetch all categories from the database."""
+    cursor.execute("SELECT id, name FROM categories")
+    return cursor.fetchall()
 
 
 def delete_category():

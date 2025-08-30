@@ -2,7 +2,6 @@
 Utility functions and helper methods.
 """
 
-from database import cursor
 from datetime import datetime
 
 
@@ -77,9 +76,3 @@ def get_note():
             return ""
         else:
             print("Invalid option. Please enter 'y' or 'n'.")
-
-
-def fetch_categories():
-    """Fetch all categories from the database."""
-    cursor.execute("SELECT id, name FROM categories")
-    return cursor.fetchall()

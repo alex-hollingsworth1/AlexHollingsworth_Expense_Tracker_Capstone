@@ -83,6 +83,7 @@ def view_menu_again():
             clear_screen()
             return True
         elif main_menu == "n":
+            print("\nHave a good day!")
             return False
         else:
             print("Invalid option. Please try again.")

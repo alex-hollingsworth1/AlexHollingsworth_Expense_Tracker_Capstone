@@ -16,6 +16,7 @@ cursor.execute("DELETE FROM expenses")
 cursor.execute("DELETE FROM income")
 cursor.execute("DELETE FROM budgets")
 cursor.execute("DELETE FROM goals")
+cursor.execute("DELETE FROM categories")
 db.commit()
 
 # Add test categories if they don't exist
