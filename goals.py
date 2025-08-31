@@ -27,16 +27,25 @@ def update_progress(goal_id):
     cursor.execute(
         """SELECT id, name, target, deadline, notes, status FROM goals
            WHERE id = ?""",
-        (goal_id,)
+        (goal_id,),
     )
     goal_details = cursor.fetchone()
 
     # Print out goal with the ID requested by the user
-    print("Here are the details from your goals with this specific ID:")
-    show_goals(goal_list=goal_details)
-    saved_amount = float(
-        input("\nHow much have you saved so far for this goal? ")
-    )
+    print("\nHere are the details from your goals with this specific ID:\n")
+    show_goals([goal_details])
+    try:
+        saved_amount = float(
+            input(
+                "\nHow much have you saved so far for this goal (in dollars)? "
+            )
+        )
+        if saved_amount < 0:
+            print("Amount cannot be negative. Setting to 0.")
+            saved_amount = 0
+    except ValueError:
+        print("Invalid amount. Setting to 0.")
+        saved_amount = 0
     remaining_amount = goal_details[2] - saved_amount
     deadline = datetime.strptime(
         goal_details[3], "%Y-%m-%d"
@@ -45,27 +54,45 @@ def update_progress(goal_id):
     days_remaining = (
         deadline - today
     ).days  # This gives you the number of days
-    show_remaining_amount = input(
-        "Would you like a new table showing the remaining amount and how "
-        " many days are remaining?"
-    ).lower()
+
+    # After getting saved_amount, calculate display status
+    if saved_amount == 0:
+        display_status = "Not Started"
+    elif saved_amount >= goal_details[2]:  # goal_details[2] is target
+        display_status = "Completed"
+    elif days_remaining < 0:
+        display_status = "Behind Schedule"
+    else:
+        display_status = "On Track"
 
     while True:
+        show_remaining_amount = input(
+            "Would you like a new table showing the remaining amount and how "
+            " many days are remaining? (y/n): "
+        ).lower()
         if show_remaining_amount == "y":
-            print("\nUpdated Goal Progress:")
-            print(f"Goal: {goal_details[1]}")
-            print(f"Target: ${goal_details[2]:.2f}")
-            print(f"Saved: ${saved_amount:.2f}")
-            print(f"Remaining: ${remaining_amount:.2f}")
+            print("\nUpdated Goal Progress:\n")
+            print(
+                f"{'Goal':<40} {'Target':<11} {'Saved':<11} {'Remaining':<11} "
+                f"{'Status':<15}"
+            )
+            print("-" * 120)
+            print(
+                f"{goal_details[1]:<40} ${goal_details[2]:<10.2f} "
+                f"${saved_amount:<10.2f} ${remaining_amount:<10.2f} "
+                f"{display_status:<15}"
+            )
+            print("\nDays until deadline: ", end="")
             if days_remaining < 0:
                 print(
-                    f"Days remaining: OVERDUE by {abs(days_remaining)} days."
+                    f"\nDays remaining: OVERDUE by {abs(days_remaining)} days."
                 )
             else:
                 print(f"Days remaining: {days_remaining} days")
-            print(f"Progress: {(saved_amount/goal_details[2]*100):.1f}%")
-            # TODO: Could add daily/weekly savings needed:
-            # remaining_amount / days_remaining
+            if goal_details[2] > 0:
+                print(f"Progress: {(saved_amount/goal_details[2]*100):.2f}%")
+            else:
+                print("Progress: N/A (no target set)")
             break
         elif show_remaining_amount == "n":
             break
@@ -83,18 +110,23 @@ def fetch_goals():
 
 def show_goals(goal_list):
     """Display the list of goals to the user."""
-    print("Your Financial Goals:\n")
+    print(
+        f"{'ID':<3} {'Goal':<40} {'Target':<11} {'Deadline':<12} "
+        f"{'Notes':<30} {'Status':<12}"
+    )
+    print("-" * 120)
     for id, name, target, deadline, notes, status in goal_list:
-        print(f"{id}: {name} - ${target:.2f} by {deadline} [{status}]")
-        if notes:
-            print(f"   Note: {notes}")
+        print(
+            f"{id:<3} {name:<40} ${target:<10.2f} {deadline:<12} "
+            f"{notes or 'No notes':<30} {status:<12}"
+        )
 
 
 def pick_goals(goal_list):
     """Display the list of goals to the user."""
     show_goals(goal_list)
     user_choice = input(
-        "Select goal ID to view or update progress or N to return."
+        "\nSelect goal ID to view or update progress or N to return: "
     )
     if user_choice.upper() == "N":
         return None
@@ -122,12 +154,22 @@ def confirm_or_edit_goals(
     while True:
         print("Here is your summary:\n")
         print(
-            f"1. Goal name - {goal_name}\n2. Target - ${goal_amount:.2f}\n "
-            f"3. Deadline Date - {goal_deadline}\n4. "
-            f"Notes - {goal_notes}\n5. Status - {goal_status}"
+            f"{'Goal':<40} {'Target':<7} {'Deadline':<12} {'Notes':<30} "
+            f"{'Status':<12}"
         )
+        print("-" * 120)
+        print(
+            f"{goal_name:<40} ${goal_amount:<6.2f} {goal_deadline:<12} "
+            f"{goal_notes or 'No notes':<30} {goal_status:<12}"
+        )
+        print("\nEdit options:")
+        print("1. Goal name")
+        print("2. Target amount")
+        print("3. Deadline")
+        print("4. Notes")
+        print("5. Status")
         choice = input(
-            "Enter Y to confirm, N to cancel, or 1-5 to edit: "
+            "\nEnter Y to confirm, N to cancel, or 1-5 to edit: "
         ).lower()
         if choice == "y":
             return (
@@ -188,7 +230,9 @@ def get_goal_amount():
     """Get and validate amount input from user."""
     while True:
         try:
-            amount = float(input("Please type the goal amount here: "))
+            amount = float(
+                input("Please type the goal amount here (in dollars): ")
+            )
             if amount <= 0:
                 print("Amount must be greater than 0.")
                 continue
@@ -224,7 +268,8 @@ def get_status():
             return status
         else:
             print(
-                "Invalid choice. Please select 1-4 or press Enter for default."
+                "Invalid choice. Please select 1-4 or press Enter for "
+                "default. "
             )
 
 
@@ -242,7 +287,7 @@ def set_financial_goals():
         collect_goal_fields()
     )
     # IMPORTANT: We intentionally reuse the same variable names here.
-    # confirm_or_edit_goals() returns potentially EDITED values if user
+    # confirm_or_edit_goals() returns potentially edited values if user
     # chose to modify. By reassigning to the same variables, we ensure
     # the final (edited) values are what gets saved to the database, not
     # the original collected values.
@@ -261,7 +306,7 @@ def set_financial_goals():
             goal_status,
         )
     else:
-        print("Goal creation cancelled. Returning to main menu.")
+        print("Goal creation cancelled.")
 
 
 def progress_towards_goals():

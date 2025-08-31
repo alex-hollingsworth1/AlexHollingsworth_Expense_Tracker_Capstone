@@ -14,6 +14,7 @@ from transactions import (
     add_income,
     view_income,
     view_income_by_category,
+    update_transaction,
 )
 from budgets import (
     set_budget,
@@ -48,13 +49,14 @@ menu_dict = {
     4: "Add income",
     5: "View income",
     6: "View income by category",
-    7: "Set budget for a category",
-    8: "View budget for a category",
-    9: "Set financial goals",
-    10: "View progress towards financial goals",
-    11: "Calculate overall budget",
-    12: "Edit/Update budget",
-    13: "Quit",
+    7: "Update transaction",
+    8: "Set budget for a category",
+    9: "View budget for a category",
+    10: "Set financial goals",
+    11: "View progress towards financial goals",
+    12: "Calculate overall budget",
+    13: "Edit/Update budget",
+    14: "Quit",
 }
 
 menu_functions = {
@@ -64,13 +66,14 @@ menu_functions = {
     4: add_income,
     5: view_income,
     6: view_income_by_category,
-    7: set_budget,
-    8: view_budget_for_category,
-    9: set_financial_goals,
-    10: progress_towards_goals,
-    11: calculate_overall_budget,
-    12: edit_budget,
-    13: quit_and_exit,
+    7: None,  # special case handling for update_transaction()
+    8: set_budget,
+    9: view_budget_for_category,
+    10: set_financial_goals,
+    11: progress_towards_goals,
+    12: calculate_overall_budget,
+    13: edit_budget,
+    14: quit_and_exit,
 }
 
 
@@ -108,7 +111,22 @@ def main():
             )
             print()  # Add blank line for better spacing
             if user_select in menu_functions:
-                if user_select == 13:  # Quit option
+                if user_select == 7:
+                    user_choice = input(
+                        "Would you like to update an expense or income? "
+                        "Enter 'E' for expense or 'I' for income: "
+                    ).upper()
+                    if user_choice == "E":
+                        update_transaction("expense")
+                        user_continue = view_menu_again()
+                    elif user_choice == "I":
+                        update_transaction("income")
+                        user_continue = view_menu_again()
+                    else:
+                        print("Invalid option. Please try again")
+                        user_continue = view_menu_again()
+                elif user_select == 14:
+                    menu_functions[user_select]()  # Quit option
                     user_continue = False
                 else:
                     menu_functions[user_select]()

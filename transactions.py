@@ -88,7 +88,7 @@ def update_transaction(transaction_type):
             SELECT e.id, c.name, e.amount, e.date, e.note
             FROM expenses e
             JOIN categories c ON e.category_id = c.id
-            ORDER BY e.date DESC
+            ORDER BY e.id
         """
         )
     else:  # income
@@ -97,7 +97,7 @@ def update_transaction(transaction_type):
             SELECT i.id, c.name, i.amount, i.date, i.note
             FROM income i
             JOIN categories c ON i.category_id = c.id
-            ORDER BY i.date DESC
+            ORDER BY i.id
         """
         )
     transactions = cursor.fetchall()

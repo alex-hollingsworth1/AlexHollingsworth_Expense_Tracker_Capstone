@@ -154,4 +154,3 @@ print(f"Total Expenses: ${total_expenses:.2f}")
 print(f"Balance: ${total_income - total_expenses:.2f}")
 
 db.close()
-print("\nDatabase connection closed.")

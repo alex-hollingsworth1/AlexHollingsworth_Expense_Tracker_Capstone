@@ -87,7 +87,7 @@ def fetch_all_budgets():
         b.remaining_amount, b.percentage, b.category_id
            FROM budgets b
            JOIN categories c ON b.category_id = c.id
-           ORDER BY c.id"""
+           ORDER BY b.id"""
     )
     return cursor.fetchall()
 
@@ -97,7 +97,7 @@ def choose_budget_to_edit(budget_list):
     print("\nSelect a budget to edit:")
     print(
         f"{'ID':<4} {'Category':<15} {'Amount':<12} {'Dates':<30} "
-        f"{'Notes':<30} {'Used':<8} {'Status'}"
+        f"{'Notes':<30} {'% Used':<10} {'Status'}"
     )
     print("-" * 120)
 
@@ -121,7 +121,7 @@ def choose_budget_to_edit(budget_list):
         print(
             f"{bid:<4} {name:<15} ${amount:<11.2f} "
             f"{dates or 'No dates':<30} {note or 'No notes':<30} "
-            f"{f'{percentage:.1f}%':<8} {display_period}"
+            f"{f'{percentage:.2f}%':<10} {display_period}"
         )
 
     while True:
@@ -264,7 +264,7 @@ def update_budget_in_database(budget_data):
     print(f"\nBudget for {name} updated successfully!")
     print(f"New amount: ${amount:.2f}")
     print(f"Remaining: ${remaining_amount:.2f}")
-    print(f"Percentage used: {percentage:.1f}%")
+    print(f"Percentage used: {percentage:.2f}%")
 
 
 def insert_budget(
