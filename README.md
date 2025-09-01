@@ -132,9 +132,6 @@ python main.py        # Start testing with populated data
   - next() in budgets.py quickly finds the first matching budget tuple by ID.  
   - Triple-quoted strings for multi-line SQL queries (better readability); single quotes for short queries.  
 
-- Test data: 
-  - The test_data.py file includes automatically generated sample data to ensure the system could be thoroughly tested with varied transactions, dates, and amounts.
-
 ---
 
 ## Known Limitations

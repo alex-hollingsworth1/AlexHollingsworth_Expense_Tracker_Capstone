@@ -39,7 +39,7 @@ def view_menu(user_menu):
 
 
 def quit_and_exit():
-    print("\nGoodbye!")
+    print("Goodbye!")
 
 
 menu_dict = {

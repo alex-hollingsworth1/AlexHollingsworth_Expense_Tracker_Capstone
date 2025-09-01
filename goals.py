@@ -88,7 +88,7 @@ def update_progress(goal_id):
                     f"\nDays remaining: OVERDUE by {abs(days_remaining)} days."
                 )
             else:
-                print(f"Days remaining: {days_remaining} days")
+                print(f"{days_remaining} days")
             if goal_details[2] > 0:
                 print(f"Progress: {(saved_amount/goal_details[2]*100):.2f}%")
             else:
@@ -111,13 +111,13 @@ def fetch_goals():
 def show_goals(goal_list):
     """Display the list of goals to the user."""
     print(
-        f"{'ID':<3} {'Goal':<40} {'Target':<11} {'Deadline':<12} "
+        f"{'ID':<3} {'Goal':<30} {'Target':<11} {'Deadline':<12} "
         f"{'Notes':<30} {'Status':<12}"
     )
     print("-" * 120)
     for id, name, target, deadline, notes, status in goal_list:
         print(
-            f"{id:<3} {name:<40} ${target:<10.2f} {deadline:<12} "
+            f"{id:<3} {name:30} ${target:<10.2f} {deadline:<12} "
             f"{notes or 'No notes':<30} {status:<12}"
         )
 

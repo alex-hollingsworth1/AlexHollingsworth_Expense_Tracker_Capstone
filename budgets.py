@@ -465,6 +465,7 @@ def set_budget():
         category_id = choose_category(cats)
         if category_id is None:
             # Either invalid input or user added a new category.
+            print("Refreshing categories...")
             # Loop refreshes the list and shows menu again.
             continue
 
@@ -529,7 +530,7 @@ def view_budget_for_category():
             print(
                 f"{'ID':<5} {'Name':<15} {'Amount':<12} {'Dates':<30} "
                 f"{'Period':<14} {'Note':<25} {'Remaining Amount':<20} "
-                f"{'Percentage':<10}"
+                f"{'% Used':<10}"
             )
             print("-" * 150)
 
@@ -556,7 +557,7 @@ def view_budget_for_category():
                 )
             break
         else:
-            if not ask_continue_filtering():
+            if not ask_continue_filtering("budget"):
                 break
 
 

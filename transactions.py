@@ -215,7 +215,7 @@ def filter_expenses():
         if user_expense.lower() == "y":
             return True
         elif user_expense.lower() == "n":
-            print("Here are all the expenses:")
+            print("\nHere are all the expenses:")
             return False
         else:
             print("Invalid option, please try again.")
@@ -300,25 +300,26 @@ def fetch_transaction_by_category(category_id, transaction_type):
         )
     else:  # income
         cursor.execute(
-            """SELECT category_id, amount, date, note FROM income
-                 WHERE category_id = ?""",
+            """SELECT i.id, c.name, i.amount, i.date, i.note
+                FROM income i
+                JOIN categories c ON i.category_id = c.id
+                WHERE i.category_id = ?""",
             (category_id,),
         )
     return cursor.fetchall()
 
 
-def ask_continue_filtering():
+def ask_continue_filtering(transaction_type):
     """Ask user if they want to continue filtering after no results
     found."""
     while True:
         user_continue = input(
-            "\nNo expenses found for selected criteria. "
-            "Would you like to try filtering another category? y/n: "
+            f"\nNo {transaction_type} found for selected criteria. "
+            f"Would you like to try viewing {transaction_type} again? y/n: "
         ).lower()
         if user_continue == "y":
             return True
         elif user_continue == "n":
-            print("Returning to main menu.")
             return False
         else:
             print("Invalid option. Please try again.")
@@ -352,8 +353,9 @@ def view_expenses():
                         f"{date:<14} {note or 'No note':<25}"
                     )
                 print("\n")
+                break
             else:
-                if not ask_continue_filtering():
+                if not ask_continue_filtering("expenses"):
                     break
 
 
@@ -382,7 +384,7 @@ def view_expenses_by_category():
             print("\n")
             break
         else:
-            if not ask_continue_filtering():
+            if not ask_continue_filtering("expenses"):
                 break
 
 
@@ -438,8 +440,9 @@ def view_income():
                         f"{date:<14} {note or 'No note':<25}"
                     )
                 print("\n")
+                break
             else:
-                if not ask_continue_filtering():
+                if not ask_continue_filtering("income"):
                     break
 
 
@@ -468,5 +471,5 @@ def view_income_by_category():
             print("\n")
             break
         else:
-            if not ask_continue_filtering():
+            if not ask_continue_filtering("income"):
                 break

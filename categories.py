@@ -24,8 +24,19 @@ def choose_category_for_viewing():
     cats = fetch_categories()
     show_categories(cats)
     while True:
+        user_cat = input("\nWhich category would you like to filter by? ")
+
+        # Check for "n" FIRST, before trying to convert to int
+        if user_cat.upper() == "N":
+            add_category()
+            # After adding, refresh categories and show them again
+            print("Refreshing categories...")
+            cats = fetch_categories()
+            show_categories(cats)
+            continue
+
+        # Now try to convert to int
         try:
-            user_cat = input("\nWhich category would you like to filter by? ")
             cid = int(user_cat)
             if cid in {c[0] for c in cats}:
                 return cid
@@ -34,7 +45,7 @@ def choose_category_for_viewing():
                     "Invalid category ID. Please choose from the list above."
                 )
         except ValueError:
-            print("Invalid entry, please enter a number.")
+            print("Invalid entry, please enter a number or 'N' to create new.")
 
 
 def show_categories(category_list):
