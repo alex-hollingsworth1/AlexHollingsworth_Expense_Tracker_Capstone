@@ -21,19 +21,23 @@ db.commit()
 
 # Add test categories if they don't exist
 test_categories = [
-    "Groceries",
-    "Entertainment",
-    "Gas",
-    "Salary",
-    "Freelance",
-    "Dining Out",
-    "Shopping",
-    "Bills",
+    ("Groceries", "EXPENSE"),
+    ("Entertainment", "EXPENSE"),
+    ("Gas", "EXPENSE"),
+    ("Dining Out", "EXPENSE"),
+    ("Shopping", "EXPENSE"),
+    ("Bills", "EXPENSE"),
+    ("Salary", "INCOME"),
+    ("Freelance", "INCOME"),
 ]
 
-for cat in test_categories:
+for name, category_type in test_categories:
     cursor.execute(
-        "INSERT OR IGNORE INTO categories (name) VALUES (?)", (cat,)
+        """
+        INSERT OR IGNORE INTO categories (name, category_type)
+        VALUES (?, ?)
+        """,
+        (name, category_type),
     )
 db.commit()
 
@@ -81,8 +85,7 @@ budget_data = [
     (
         categories.get("Groceries", 1),
         400.00,
-        "30 days (monthly)",
-        "Monthly grocery budget",
+        "Monthly grocery budget (30-day period)",
         "2024-12-01 - Indefinitely",
         250.00,
         62.5,
@@ -90,19 +93,18 @@ budget_data = [
     (
         categories.get("Entertainment", 2),
         100.00,
-        "30 days (monthly)",
-        "Fun money",
+        "Fun money budget (30-day period)",
         "2024-12-01 - Indefinitely",
         84.01,
         15.99,
     ),
 ]
 
-for cat_id, amount, period, note, dates, remaining, percentage in budget_data:
+for cat_id, amount, note, dates, remaining, percentage in budget_data:
     cursor.execute(
-        """INSERT INTO budgets (category_id, amount, period, note, dates,
-           remaining_amount, percentage) VALUES (?, ?, ?, ?, ?, ?, ?)""",
-        (cat_id, amount, period, note, dates, remaining, percentage),
+        """INSERT INTO budgets (category_id, amount, note, dates,
+           remaining_amount, percentage) VALUES (?, ?, ?, ?, ?, ?)""",
+        (cat_id, amount, note, dates, remaining, percentage),
     )
 
 # Add test goals
@@ -113,11 +115,11 @@ goals_data = [
     ("New Laptop", 1500.00, "2025-03-01", "For work", "Behind Schedule"),
 ]
 
-for name, target, deadline, notes, status in goals_data:
+for name, target, deadline, note, status in goals_data:
     cursor.execute(
-        """INSERT INTO goals (name, target, deadline, notes, status)
+        """INSERT INTO goals (name, target, deadline, note, status)
            VALUES (?, ?, ?, ?, ?)""",
-        (name, target, deadline, notes, status),
+        (name, target, deadline, note, status),
     )
 
 db.commit()
