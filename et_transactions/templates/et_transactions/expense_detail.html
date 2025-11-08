@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Expense Detail{% endblock %}
+
+{% block content %}
+<section id="expense-detail">
+    <p>Date: {{ expense.date|date:"M d, Y" }}</p>
+    <p>Amount: {{ expense.amount|floatformat:2 }}</p>
+    <p>Category: {{ expense.category.name }}</p>
+    <p>Note: {{ expense.note|default:"No note provided." }}</p>
+</section>
+{% endblock %}

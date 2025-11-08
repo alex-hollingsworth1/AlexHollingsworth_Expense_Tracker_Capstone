@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    CategoryDetailView,
     BudgetListView,
     CategoryListView,
     ExpenseListView,
@@ -16,4 +17,9 @@ urlpatterns = [
     path("income/", IncomeListView.as_view(), name="income"),
     path("budgets/", BudgetListView.as_view(), name="budgets"),
     path("goals/", GoalListView.as_view(), name="goals"),
+    path(
+        "categories/<int:pk>/",
+        CategoryDetailView.as_view(),
+        name="category-detail",
+    ),
 ]

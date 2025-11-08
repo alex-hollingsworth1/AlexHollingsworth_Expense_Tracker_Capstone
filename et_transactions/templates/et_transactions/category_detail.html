@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<section id="category-detail">
+    <h1>{{ category.name }}</h1>
+    <p>{{ category.get_category_type_display }}</p>
+
+    <h2>Recent Expenses</h2>
+    {% for expense in expenses %}
+        <article>
+            <p>
+                <strong>Date:</strong> {{ expense.date }}
+                – <strong>Amount:</strong> {{ expense.amount }}
+            </p>
+            <p><strong>Note:</strong> {{ expense.note }}</p>
+        </article>
+    {% empty %}
+        <p>No expenses recorded for this category yet.</p>
+    {% endfor %}
+</section>
+{% endblock %}

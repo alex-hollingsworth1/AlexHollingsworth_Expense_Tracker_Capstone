@@ -39,7 +39,9 @@ class Category(models.Model):
 class Expense(models.Model):
     """Expense record with amount, date, note and category ID."""
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="expenses"
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     note = models.CharField(max_length=250, blank=True, null=True)
@@ -73,8 +75,7 @@ class Budget(models.Model):
         max_length=255,
         blank=True,
         help_text=(
-            "Comma-separated list of YYYY-MM-DD checkpoints "
-            "(start,end,...)"
+            "Comma-separated list of YYYY-MM-DD checkpoints " "(start,end,...)"
         ),
     )
     remaining_amount = models.DecimalField(max_digits=10, decimal_places=2)

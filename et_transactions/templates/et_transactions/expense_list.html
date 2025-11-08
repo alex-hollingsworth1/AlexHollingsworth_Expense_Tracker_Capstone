@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Expenses{% endblock %}
+{% block title %}
+Categories
+{% endblock %}
 
 {% block content %}
-
+    <section id="all-posts">
+        <h2>My Transaction Expenses</h2>
+        <ul>
+            {% for expense in expenses %}
+                {% include "et_transactions/includes/expense.html" %}
+            {% endfor %}
+        </ul>
+    </section>
 {% endblock %}

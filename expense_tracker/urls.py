@@ -22,5 +22,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('expense-tracker', include('et_transactions.urls'))
+    path('transactions/', include('et_transactions.urls'))
 ]

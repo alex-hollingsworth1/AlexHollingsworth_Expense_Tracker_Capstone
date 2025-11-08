@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Income Detail{% endblock %}
+
+{% block content %}
+<section id="income-detail">
+    <p>Date: {{ income.date|date:"M d, Y" }}</p>
+    <p>Amount: {{ income.amount|floatformat:2 }}</p>
+    <p>Category: {{ income.category.name }}</p>
+    <p>Note: {{ income.note|default:"No note provided." }}</p>
+</section>
+{% endblock %}
