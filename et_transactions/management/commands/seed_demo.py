@@ -113,3 +113,43 @@ class Command(BaseCommand):
         ]
         Expense.objects.bulk_create(expenses)
 
+        income_entries = [
+            Income(
+                category=category_lookup["Salary"],
+                amount=Decimal("3500.00"),
+                date=date(2024, 12, 1),
+                note="Monthly salary",
+            ),
+            Income(
+                category=category_lookup["Freelance"],
+                amount=Decimal("500.00"),
+                date=date(2024, 12, 15),
+                note="Website project",
+            ),
+        ]
+        Income.objects.bulk_create(income_entries)
+
+        budgets = [
+            Budget(
+                category=category_lookup["Groceries"],
+                amount=Decimal("400.00"),
+                start_date=date(2024, 12, 1),
+                end_date=date(2024, 12, 31),
+                dates="2024-12-01,2024-12-31",
+                remaining_amount=Decimal("250.00"),
+                percentage=Decimal("62.50"),
+                note="Monthly grocery budget",
+            ),
+        ]
+        Budget.objects.bulk_create(budgets)
+
+        goals = [
+            Goal(
+                name="Emergency Fund",
+                target=Decimal("5000.00"),
+                deadline=date(2025, 6, 1),
+                status="On Track",
+                note="6 months expenses",
+            ),
+        ]
+        Goal.objects.bulk_create(goals)

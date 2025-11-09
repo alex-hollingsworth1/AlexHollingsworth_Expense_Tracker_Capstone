@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}
-Categories
+{% block title %}Categories{% endblock %}
+
+{% block css_files %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'et_transactions/transactions.css' %}">
 {% endblock %}
 
 {% block content %}
-    <section id="all-posts">
+    <section class="section-listing">
         <h2>My Transaction Categories</h2>
         <ul>
             {% for category in categories %}
                 {% include "et_transactions/includes/category.html" %}
+            {% empty %}
+                <li>No categories yet.</li>
             {% endfor %}
         </ul>
     </section>

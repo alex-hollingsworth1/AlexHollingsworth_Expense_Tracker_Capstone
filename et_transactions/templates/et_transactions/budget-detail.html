@@ -3,14 +3,14 @@
 {% block title %}Budget Detail{% endblock %}
 
 {% block content %}
-<section id="budget-detail">
-    <p>Start Date: {{ budget.start_date|date:"M d, Y" }}</p>
-    <p>End Date: {{ budget.end_date|date:"M d, Y" }}</p>
-    <p>Amount: {{ budget.amount|floatformat:2 }}</p>
-    <p>Category: {{ budget.category.name }}</p>
-    <p>Note: {{ budget.note|default:"No note provided." }}</p>
-    <p>Dates: {{ budget.dates }}</p>
-    <p>Remaining Amount: {{ budget.remaining_amount|floatformat:2 }}</p>
-    <p>Percentage: {{ budget.percentage|floatformat:2 }}%</p>
-</section>
+    <section id="budget-detail">
+        <p>Start Date: {{ budget.start_date|date:"M d, Y" }}</p>
+        <p>End Date: {{ budget.end_date|date:"M d, Y" }}</p>
+        <p>Amount: {{ budget.amount|floatformat:2 }}</p>
+        <p>Category: {{ budget.category.name }}</p>
+        <p>Note: {{ budget.note|default:"No note provided." }}</p>
+        <p>Dates: {{ budget.dates }}</p>
+        <p>Remaining Amount: {{ budget.remaining_amount|floatformat:2 }}</p>
+        <p>Percentage: {{ budget.percentage|floatformat:2 }}%</p>
+    </section>
 {% endblock %}
