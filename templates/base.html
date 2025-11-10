@@ -5,11 +5,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+    >
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'app.css' %}">
     {% block css_files %}{% endblock %}
 </head>
 <body>
+    <header id="main-navigation">
+        <h1><a href="{% url 'index' %}">Expense Tracker</a></h1>
+        <nav>
+            <a href="{% url 'category-type-list' %}">Create Transaction</a>
+            <a href="{% url 'expenses' %}">Expenses</a>
+            <a href="{% url 'income' %}">Income</a>
+            <a href="{% url 'budgets' %}">Budgets</a>
+            <a href="{% url 'goals' %}">Goals</a>
+        </nav>
+    </header>
     {% block content %}{% endblock %}
 </body>
 </html>

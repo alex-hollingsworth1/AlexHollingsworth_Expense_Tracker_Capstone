@@ -1,22 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
-
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: 'Open Sans', 'Lato', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 body {
   margin: 0;
+  background: #edf7f1;
+  font-family: inherit;
 }
 
 h1,
 h2,
 h3 {
-  font-family: 'Lato', sans-serif;
-  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
 }
 
 #main-navigation {

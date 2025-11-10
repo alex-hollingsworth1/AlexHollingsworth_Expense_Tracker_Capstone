@@ -2,11 +2,22 @@
 
 {% block title %}Expense Detail{% endblock %}
 
+{% block css_files %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'et_transactions/detail.css' %}">
+{% endblock %}
+
 {% block content %}
-<section id="expense-detail">
-    <p>Date: {{ expense.date|date:"M d, Y" }}</p>
-    <p>Amount: {{ expense.amount|floatformat:2 }}</p>
+<section class="detail-card">
+    <h1>Expense</h1>
+    <p class="meta">Date: {{ expense.date|date:"M d, Y" }}</p>
+    <p class="meta">Amount: ${{ expense.amount|floatformat:2 }}</p>
     <p>Category: {{ expense.category.name }}</p>
     <p>Note: {{ expense.note|default:"No note provided." }}</p>
+    <p>
+        <a href="{% url 'category-detail' expense.category.pk %}">
+            View Category Details
+        </a>
+    </p>
 </section>
 {% endblock %}

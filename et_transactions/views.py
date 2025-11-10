@@ -1,6 +1,9 @@
-from django.views.generic import ListView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, TemplateView
+from django.views.generic.edit import CreateView
 from django.views.generic.detail import DetailView
 
+from .forms import CreateExpenseForm, CreateIncomeForm
 from .models import Budget, Category, Expense, Goal, Income
 
 
@@ -11,6 +14,25 @@ class IndexView(ListView):
     model = Expense
 
 
+class CategoryTypeListView(TemplateView):
+    """Display available category types before drilling into
+    categories."""
+
+    template_name = "et_transactions/category_type_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        type_links = []
+        for value, label in Category.CategoryType.choices:
+            if value == Category.CategoryType.EXPENSE:
+                url = reverse("create-expense")
+            else:
+                url = reverse("create-income")
+            type_links.append({"label": label, "url": url})
+        context["type_links"] = type_links
+        return context
+
+
 class CategoryListView(ListView):
     """List all transaction categories."""
 
@@ -18,6 +40,24 @@ class CategoryListView(ListView):
     model = Category
     ordering = ["name"]
     context_object_name = "categories"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        selected_type = self.request.GET.get("type")
+        if selected_type:
+            queryset = queryset.filter(category_type=selected_type)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        selected_type = self.request.GET.get("type")
+        context["selected_type"] = selected_type
+        if selected_type:
+            type_map = dict(Category.CategoryType.choices)
+            context["selected_type_label"] = type_map.get(
+                selected_type, selected_type.title()
+            )
+        return context
 
 
 class CategoryDetailView(DetailView):
@@ -101,3 +141,19 @@ class GoalListView(ListView):
 
     template_name = "et_transactions/goal_list.html"
     model = Goal
+
+
+class CreateExpenseView(CreateView):
+    """View for creating a new expense."""
+
+    template_name = "et_transactions/create-expense.html"
+    form_class = CreateExpenseForm
+    success_url = reverse_lazy("expenses")
+
+
+class CreateIncomeView(CreateView):
+    """View for creating a new income."""
+
+    template_name = "et_transactions/create-income.html"
+    form_class = CreateIncomeForm
+    success_url = reverse_lazy("income")

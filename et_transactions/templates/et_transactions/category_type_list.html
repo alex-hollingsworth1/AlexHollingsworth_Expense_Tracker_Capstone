@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Category Types{% endblock %}
+
+{% block css_files %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'et_transactions/transactions.css' %}">
+{% endblock %}
+
+{% block content %}
+    <section class="section-listing">
+        <h2>What type of transaction would you like to create?</h2>
+        <ul>
+            {% for item in type_links %}
+                <li>
+                    <article>
+                        <a href="{{ item.url }}">
+                            <h3>{{ item.label }}</h3>
+                        </a>
+                    </article>
+                </li>
+            {% empty %}
+                <li>No category types yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}
+

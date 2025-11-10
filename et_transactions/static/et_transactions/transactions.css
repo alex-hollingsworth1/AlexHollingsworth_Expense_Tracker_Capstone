@@ -17,15 +17,16 @@ section.section-listing ul {
 }
 
 section.section-listing li article {
-  background: #f0fff4;
-  border: 1px solid #d1e7dd;
+  background: #0f5132;
+  border: 1px solid #0c3f26;
   border-radius: 8px;
   padding: 1.25rem 1.5rem;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+  color: #e9f5ee;
 }
 
 section.section-listing li article:hover {
-  box-shadow: 0 8px 16px rgba(15, 81, 50, 0.15);
+  box-shadow: 0 12px 20px rgba(12, 63, 38, 0.3);
   transform: translateY(-2px);
 }
 
@@ -41,7 +42,7 @@ section.section-listing li article a:hover {
 
 section.section-listing .meta {
   margin-top: 0.5rem;
-  color: #495057;
+  color: #b4f0c8;
   font-size: 0.95rem;
 }
 
