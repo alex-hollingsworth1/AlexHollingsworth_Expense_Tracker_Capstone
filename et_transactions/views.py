@@ -1,7 +1,10 @@
+"""Views for the et_transactions app."""
+
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
+from django.contrib import messages
 
 from .forms import (
     CreateExpenseForm,
@@ -11,12 +14,17 @@ from .forms import (
 )
 from .models import Budget, Category, Expense, Goal, Income
 
+# ----------------------Index View----------------------
+
 
 class IndexView(ListView):
     """Display the latest expense activity on the home page."""
 
     template_name = "et_transactions/index.html"
     model = Expense
+
+
+# ----------------------Category Views----------------------
 
 
 class CategoryTypeListView(TemplateView):
@@ -77,6 +85,9 @@ class CategoryDetailView(DetailView):
         return context
 
 
+# ----------------------Expense Views----------------------
+
+
 class ExpenseListView(ListView):
     """List recorded expenses."""
 
@@ -97,6 +108,51 @@ class ExpenseDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["category"] = self.object.category
         return context
+
+
+class CreateExpenseView(CreateView):
+    """View for creating a new expense."""
+
+    template_name = "et_transactions/create-expense.html"
+    form_class = CreateExpenseForm
+    success_url = reverse_lazy("expenses")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Expense created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to create expense. Please fix the errors below.")
+        return super().form_invalid(form)
+
+class ExpenseUpdateView(UpdateView):
+    """View for updating an existing expense."""
+
+    model = Expense
+    form_class = CreateExpenseForm
+    template_name = "et_transactions/update-expense.html"
+    success_url = reverse_lazy("expenses")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Expense updated successfully.")
+        return response
+
+
+class ExpenseDeleteView(DeleteView):
+    """View for deleting an existing expense."""
+
+    model = Expense
+    template_name = "et_transactions/confirm-delete-expense.html"
+    success_url = reverse_lazy("expenses")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Expense deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------------Income Views----------------------
 
 
 class IncomeListView(ListView):
@@ -121,6 +177,55 @@ class IncomeDetailView(DetailView):
         return context
 
 
+class CreateIncomeView(CreateView):
+    """View for creating a new income."""
+
+    template_name = "et_transactions/create-income.html"
+    form_class = CreateIncomeForm
+    success_url = reverse_lazy("income")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Income recorded successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to record income. Please fix the errors below.")
+        return super().form_invalid(form)
+
+class IncomeUpdateView(UpdateView):
+    """View for updating an existing income."""
+
+    model = Income
+    form_class = CreateIncomeForm
+    template_name = "et_transactions/update-income.html"
+    success_url = reverse_lazy("income")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Income updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to update income. Please fix the errors below.")
+        return super().form_invalid(form)
+
+
+class IncomeDeleteView(DeleteView):
+    """View for deleting an existing income."""
+
+    model = Income
+    template_name = "et_transactions/confirm-delete-income.html"
+    success_url = reverse_lazy("income")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Income deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------------Budget Views----------------------
+
+
 class BudgetListView(ListView):
     """List budgets for each category."""
 
@@ -143,6 +248,56 @@ class BudgetDetailView(DetailView):
         return context
 
 
+class CreateBudgetView(CreateView):
+    """View for creating a new budget."""
+
+    template_name = "et_transactions/create-budget.html"
+    form_class = CreateBudgetForm
+    success_url = reverse_lazy("budgets")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Budget created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to create budget. Please fix the errors below.")
+        return super().form_invalid(form)
+
+
+class BudgetUpdateView(UpdateView):
+    """View for updating an existing budget."""
+
+    model = Budget
+    form_class = CreateBudgetForm
+    template_name = "et_transactions/update-budget.html"
+    success_url = reverse_lazy("budgets")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Budget updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to update budget. Please fix the errors below.")
+        return super().form_invalid(form)
+
+
+class BudgetDeleteView(DeleteView):
+    """View for deleting an existing budget."""
+
+    model = Budget
+    template_name = "et_transactions/confirm-delete-budget.html"
+    success_url = reverse_lazy("budgets")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Budget deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------------Goal Views----------------------
+
+
 class GoalListView(ListView):
     """List financial goals and their status."""
 
@@ -152,28 +307,12 @@ class GoalListView(ListView):
     context_object_name = "goals"
 
 
-class CreateExpenseView(CreateView):
-    """View for creating a new expense."""
+class GoalDetailView(DetailView):
+    """Display a single financial goal."""
 
-    template_name = "et_transactions/create-expense.html"
-    form_class = CreateExpenseForm
-    success_url = reverse_lazy("expenses")
-
-
-class CreateIncomeView(CreateView):
-    """View for creating a new income."""
-
-    template_name = "et_transactions/create-income.html"
-    form_class = CreateIncomeForm
-    success_url = reverse_lazy("income")
-
-
-class CreateBudgetView(CreateView):
-    """View for creating a new budget."""
-
-    template_name = "et_transactions/create-budget.html"
-    form_class = CreateBudgetForm
-    success_url = reverse_lazy("budgets")
+    template_name = "et_transactions/goal-detail.html"
+    model = Goal
+    context_object_name = "goal"
 
 
 class CreateGoalView(CreateView):
@@ -182,3 +321,42 @@ class CreateGoalView(CreateView):
     template_name = "et_transactions/create-goal.html"
     form_class = CreateGoalForm
     success_url = reverse_lazy("goals")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Goal created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to create goal. Please fix the errors below.")
+        return super().form_invalid(form)
+
+
+class GoalUpdateView(UpdateView):
+    """View for updating an existing goal."""
+
+    model = Goal
+    form_class = CreateGoalForm
+    template_name = "et_transactions/update-goal.html"
+    success_url = reverse_lazy("goals")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Goal updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Unable to update goal. Please fix the errors below.")
+        return super().form_invalid(form)
+
+
+class GoalDeleteView(DeleteView):
+    """View for deleting an existing goal."""
+
+    model = Goal
+    template_name = "et_transactions/confirm-delete-goal.html"
+    success_url = reverse_lazy("goals")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Goal deleted successfully.")
+        return super().delete(request, *args, **kwargs)

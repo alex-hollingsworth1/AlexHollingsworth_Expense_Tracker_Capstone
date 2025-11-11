@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Expense Detail{% endblock %}
 
@@ -20,4 +21,9 @@
         </a>
     </p>
 </section>
+
+<div class="detail-actions">
+    <a href="{% url 'expense-update' expense.pk %}">Edit</a>
+    <a class="delete-link" href="{% url 'expense-delete' expense.pk %}">Delete</a>
+</div>
 {% endblock %}

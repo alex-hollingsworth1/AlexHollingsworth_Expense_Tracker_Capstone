@@ -86,3 +86,36 @@ section.detail-card a.cancel-link:hover {
   text-decoration: underline;
 }
 
+.detail-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.detail-actions a {
+  display: inline-block;
+  padding: 0.65rem 1.6rem;
+  border-radius: 999px;
+  background: rgba(25, 135, 84, 0.12);
+  color: #0f5132;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.detail-actions a.delete-link {
+  background: rgba(220, 53, 69, 0.12);
+  color: #842029;
+}
+
+.detail-actions a:hover {
+  background: rgba(25, 135, 84, 0.22);
+  color: #0a3622;
+}
+
+.detail-actions a.delete-link:hover {
+  background: rgba(220, 53, 69, 0.22);
+  color: #5c121a;
+}
+

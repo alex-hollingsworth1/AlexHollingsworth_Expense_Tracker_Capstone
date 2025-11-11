@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Income Detail{% endblock %}
 
@@ -20,4 +21,9 @@
         </a>
     </p>
 </section>
+
+<div class="detail-actions">
+    <a href="{% url 'income-update' income.pk %}">Edit</a>
+    <a class="delete-link" href="{% url 'income-delete' income.pk %}">Delete</a>
+</div>
 {% endblock %}

@@ -7,6 +7,9 @@ Mirrors the CLI/SQLite schema to ease migration.
 from django.db import models
 
 
+# ----------------------Category Models----------------------
+
+
 class Category(models.Model):
     """Transaction category with name and type of category (expense
     or income)."""
@@ -28,12 +31,17 @@ class Category(models.Model):
         return f"{self.name}"
 
     class Meta:
+        """Meta class for the Category model."""
+
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "category_type"],
                 name="unique_category_name_per_type",
             )
         ]
+
+
+# ----------------------Expense Model----------------------
 
 
 class Expense(models.Model):
@@ -50,6 +58,9 @@ class Expense(models.Model):
         return f"{self.date} - {self.category.name} - ${self.amount}"
 
 
+# ----------------------Income Model----------------------
+
+
 class Income(models.Model):
     """Income record with amount, date, note and category ID."""
 
@@ -60,6 +71,9 @@ class Income(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.category.name} - ${self.amount}"
+
+
+# ----------------------Budget Model----------------------
 
 
 class Budget(models.Model):
@@ -98,6 +112,9 @@ class Budget(models.Model):
                 name="unique_budget_date_range_per_category",
             )
         ]
+
+
+# ----------------------Goal Model----------------------
 
 
 class Goal(models.Model):
