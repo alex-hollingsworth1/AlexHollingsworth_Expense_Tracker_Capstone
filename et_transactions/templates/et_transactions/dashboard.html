@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block css_files %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'et_transactions/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-summary">
+    <div class="summary-pill">
+        Total Income<br>${{ income_total|floatformat:2 }}
+    </div>
+    <div class="summary-pill">
+        Total Expenses<br>${{ expense_total|floatformat:2 }}
+    </div>
+    <div class="summary-pill {% if net_total >= 0 %}net-positive{% else %}net-negative{% endif %}">
+        Budgets:<br>{{ number_of_budgets }}
+    </div>
+    <div class="summary-pill {% if net_total >= 0 %}net-positive{% else %}net-negative{% endif %}">
+        Goals:<br>{{ number_of_goals }}
+    </div>
+</div>
+
+<div class="dashboard-layout">
+    <section class="dashboard-card">
+        <h2>Recent Expenses</h2>
+        <ul>
+            {% for expense in recent_expenses %}
+                {% include "et_transactions/includes/expense.html" %}
+            {% empty %}
+                <li>No expenses yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="dashboard-card">
+        <h2>Recent Income</h2>
+        <ul>
+            {% for income in recent_income %}
+                {% include "et_transactions/includes/income.html" %}
+            {% empty %}
+                <li>No income entries yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="dashboard-card">
+        <h2>Budgets</h2>
+        <ul>
+            {% for budget in recent_budgets %}
+                {% include "et_transactions/includes/budget.html" %}
+            {% empty %}
+                <li>No budgets configured yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="dashboard-card">
+        <h2>Goals</h2>
+        <ul>
+            {% for goal in recent_goals %}
+                {% include "et_transactions/includes/goal.html" %}
+            {% empty %}
+                <li>No goals defined yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}
+

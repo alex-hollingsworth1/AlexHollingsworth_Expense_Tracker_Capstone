@@ -48,8 +48,6 @@ class CreateBudgetForm(forms.ModelForm):
             "amount",
             "note",
             "dates",
-            "remaining_amount",
-            "percentage",
         ]
         labels = {
             "start_date": "Start date",
@@ -69,8 +67,6 @@ class CreateBudgetForm(forms.ModelForm):
                     "placeholder": "Comma-separated checkpoints, e.g. 2024-12-01,2024-12-31"
                 }
             ),
-            "remaining_amount": forms.NumberInput(attrs={"step": "0.01"}),
-            "percentage": forms.NumberInput(attrs={"step": "0.01"}),
         }
 
 

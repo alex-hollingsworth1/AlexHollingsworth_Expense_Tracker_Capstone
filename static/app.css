@@ -12,6 +12,10 @@ body {
   font-family: inherit;
 }
 
+.page-content {
+  padding-top: 6rem;
+}
+
 .flash-messages {
   max-width: min(90%, 50rem);
   margin: 6rem auto 1rem;

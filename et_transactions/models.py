@@ -4,7 +4,10 @@ Budget, and Goal.
 Mirrors the CLI/SQLite schema to ease migration.
 """
 
+from decimal import Decimal
+
 from django.db import models
+from django.db.models import Sum
 
 
 # ----------------------Category Models----------------------
@@ -80,7 +83,9 @@ class Budget(models.Model):
     """Budget for a category with start/end dates, amount and
     progress."""
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="budgets"
+    )
     start_date = models.DateField()
     end_date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -92,11 +97,14 @@ class Budget(models.Model):
             "Comma-separated list of YYYY-MM-DD checkpoints " "(start,end,...)"
         ),
     )
-    remaining_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    remaining_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, editable=False
+    )
     percentage = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         help_text="Store as a whole number (e.g., 82.50 for 82.5%)",
+        editable=False,
     )
 
     def __str__(self):
@@ -112,6 +120,25 @@ class Budget(models.Model):
                 name="unique_budget_date_range_per_category",
             )
         ]
+
+    def compute_remaining_and_percentage(self):
+        """Compute remaining amount and percentage spent."""
+        total_spent = (
+            self.category.expenses.filter(date__range=(self.start_date, self.end_date))
+            .aggregate(total=Sum("amount"))["total"]
+            or Decimal("0")
+        )
+        remaining = self.amount - total_spent
+        percentage = (
+            Decimal("0") if self.amount == 0 else (total_spent / self.amount) * 100
+        )
+        return remaining, percentage
+
+    def save(self, *args, **kwargs):
+        remaining, percentage = self.compute_remaining_and_percentage()
+        self.remaining_amount = remaining
+        self.percentage = percentage
+        super().save(*args, **kwargs)
 
 
 # ----------------------Goal Model----------------------

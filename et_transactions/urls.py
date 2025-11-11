@@ -2,8 +2,10 @@
 
 from django.urls import path
 from .views import (
+    BudgetDeleteView,
     BudgetDetailView,
     BudgetListView,
+    BudgetUpdateView,
     CategoryDetailView,
     CategoryListView,
     CategoryTypeListView,
@@ -11,6 +13,7 @@ from .views import (
     CreateExpenseView,
     CreateGoalView,
     CreateIncomeView,
+    DashboardView,
     ExpenseDeleteView,
     ExpenseDetailView,
     ExpenseListView,
@@ -23,14 +26,11 @@ from .views import (
     IncomeDetailView,
     IncomeListView,
     IncomeUpdateView,
-    IndexView,
-    BudgetUpdateView,
-    BudgetDeleteView,
 )
 
 
 urlpatterns = [
-    path("", IndexView.as_view(), name="index"),
+    path("", DashboardView.as_view(), name="dashboard"),
     path(
         "categories/",
         CategoryTypeListView.as_view(),

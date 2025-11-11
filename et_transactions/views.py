@@ -1,10 +1,11 @@
 """Views for the et_transactions app."""
 
+from django.contrib import messages
+from django.db.models import Sum
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
-from django.contrib import messages
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from .forms import (
     CreateExpenseForm,
@@ -14,14 +15,33 @@ from .forms import (
 )
 from .models import Budget, Category, Expense, Goal, Income
 
-# ----------------------Index View----------------------
+# ----------------------Dashboard View----------------------
 
 
-class IndexView(ListView):
-    """Display the latest expense activity on the home page."""
+class DashboardView(TemplateView):
+    """Display recent activity across expenses, income, budgets and
+    goals."""
 
-    template_name = "et_transactions/index.html"
-    model = Expense
+    template_name = "et_transactions/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["recent_expenses"] = Expense.objects.order_by("-date")[:3]
+        context["recent_income"] = Income.objects.order_by("-date")[:3]
+        context["recent_budgets"] = Budget.objects.order_by("-start_date")[:3]
+        context["recent_goals"] = Goal.objects.order_by("deadline")[:3]
+        context["expense_total"] = (
+            Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
+        )
+        context["income_total"] = (
+            Income.objects.aggregate(total=Sum("amount"))["total"] or 0
+        )
+        context["net_total"] = (
+            context["income_total"] - context["expense_total"]
+        )
+        context["number_of_budgets"] = Budget.objects.count()
+        context["number_of_goals"] = Goal.objects.count()
+        return context
 
 
 # ----------------------Category Views----------------------
@@ -123,8 +143,12 @@ class CreateExpenseView(CreateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to create expense. Please fix the errors below.")
+        messages.error(
+            self.request,
+            "Unable to create expense. Please fix the errors below.",
+        )
         return super().form_invalid(form)
+
 
 class ExpenseUpdateView(UpdateView):
     """View for updating an existing expense."""
@@ -190,8 +214,12 @@ class CreateIncomeView(CreateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to record income. Please fix the errors below.")
+        messages.error(
+            self.request,
+            "Unable to record income. Please fix the errors below.",
+        )
         return super().form_invalid(form)
+
 
 class IncomeUpdateView(UpdateView):
     """View for updating an existing income."""
@@ -207,7 +235,10 @@ class IncomeUpdateView(UpdateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to update income. Please fix the errors below.")
+        messages.error(
+            self.request,
+            "Unable to update income. Please fix the errors below.",
+        )
         return super().form_invalid(form)
 
 
@@ -261,7 +292,10 @@ class CreateBudgetView(CreateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to create budget. Please fix the errors below.")
+        messages.error(
+            self.request,
+            "Unable to create budget. Please fix the errors below.",
+        )
         return super().form_invalid(form)
 
 
@@ -279,7 +313,10 @@ class BudgetUpdateView(UpdateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to update budget. Please fix the errors below.")
+        messages.error(
+            self.request,
+            "Unable to update budget. Please fix the errors below.",
+        )
         return super().form_invalid(form)
 
 
@@ -328,7 +365,9 @@ class CreateGoalView(CreateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to create goal. Please fix the errors below.")
+        messages.error(
+            self.request, "Unable to create goal. Please fix the errors below."
+        )
         return super().form_invalid(form)
 
 
@@ -346,7 +385,9 @@ class GoalUpdateView(UpdateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Unable to update goal. Please fix the errors below.")
+        messages.error(
+            self.request, "Unable to update goal. Please fix the errors below."
+        )
         return super().form_invalid(form)
 
 
