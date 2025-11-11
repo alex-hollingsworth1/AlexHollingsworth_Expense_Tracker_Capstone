@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    BudgetDetailView,
     BudgetListView,
     CategoryDetailView,
     CategoryListView,
@@ -12,6 +13,8 @@ from .views import (
     IncomeDetailView,
     IncomeListView,
     IndexView,
+    CreateBudgetView,
+    CreateGoalView,
 )
 
 
@@ -36,6 +39,11 @@ urlpatterns = [
         name="income-detail",
     ),
     path("budgets/", BudgetListView.as_view(), name="budgets"),
+    path(
+        "budgets/<int:pk>/",
+        BudgetDetailView.as_view(),
+        name="budget-detail",
+    ),
     path("goals/", GoalListView.as_view(), name="goals"),
     path(
         "categories/<int:pk>/",
@@ -46,4 +54,6 @@ urlpatterns = [
         "expenses/create/", CreateExpenseView.as_view(), name="create-expense"
     ),
     path("income/create/", CreateIncomeView.as_view(), name="create-income"),
+    path("budgets/create/", CreateBudgetView.as_view(), name="create-budget"),
+    path("goals/create/", CreateGoalView.as_view(), name="create-goal"),
 ]

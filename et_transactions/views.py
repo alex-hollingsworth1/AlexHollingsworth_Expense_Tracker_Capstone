@@ -3,7 +3,12 @@ from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import DetailView
 
-from .forms import CreateExpenseForm, CreateIncomeForm
+from .forms import (
+    CreateExpenseForm,
+    CreateIncomeForm,
+    CreateBudgetForm,
+    CreateGoalForm,
+)
 from .models import Budget, Category, Expense, Goal, Income
 
 
@@ -22,14 +27,12 @@ class CategoryTypeListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        type_links = []
-        for value, label in Category.CategoryType.choices:
-            if value == Category.CategoryType.EXPENSE:
-                url = reverse("create-expense")
-            else:
-                url = reverse("create-income")
-            type_links.append({"label": label, "url": url})
-        context["type_links"] = type_links
+        context["action_links"] = [
+            {"label": "Add Expense", "url": reverse("create-expense")},
+            {"label": "Add Income", "url": reverse("create-income")},
+            {"label": "Add Budget", "url": reverse("create-budget")},
+            {"label": "Add Goal", "url": reverse("create-goal")},
+        ]
         return context
 
 
@@ -101,12 +104,14 @@ class IncomeListView(ListView):
 
     template_name = "et_transactions/income_list.html"
     model = Income
+    ordering = ["-date"]
+    context_object_name = "incomes"
 
 
 class IncomeDetailView(DetailView):
     """Display a single transaction income."""
 
-    template_name = "et_transactions/income_detail.html"
+    template_name = "et_transactions/income-detail.html"
     model = Income
     context_object_name = "income"
 
@@ -121,12 +126,14 @@ class BudgetListView(ListView):
 
     template_name = "et_transactions/budget_list.html"
     model = Budget
+    ordering = ["start_date"]
+    context_object_name = "budgets"
 
 
 class BudgetDetailView(DetailView):
     """Display a single transaction budget."""
 
-    template_name = "et_transactions/budget_detail.html"
+    template_name = "et_transactions/budget-detail.html"
     model = Budget
     context_object_name = "budget"
 
@@ -141,6 +148,8 @@ class GoalListView(ListView):
 
     template_name = "et_transactions/goal_list.html"
     model = Goal
+    ordering = ["deadline"]
+    context_object_name = "goals"
 
 
 class CreateExpenseView(CreateView):
@@ -157,3 +166,19 @@ class CreateIncomeView(CreateView):
     template_name = "et_transactions/create-income.html"
     form_class = CreateIncomeForm
     success_url = reverse_lazy("income")
+
+
+class CreateBudgetView(CreateView):
+    """View for creating a new budget."""
+
+    template_name = "et_transactions/create-budget.html"
+    form_class = CreateBudgetForm
+    success_url = reverse_lazy("budgets")
+
+
+class CreateGoalView(CreateView):
+    """View for creating a new goal."""
+
+    template_name = "et_transactions/create-goal.html"
+    form_class = CreateGoalForm
+    success_url = reverse_lazy("goals")

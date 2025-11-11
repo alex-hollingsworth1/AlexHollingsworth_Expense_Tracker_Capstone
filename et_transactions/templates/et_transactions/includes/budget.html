@@ -1,0 +1,17 @@
+<li>
+    <article>
+        <a href="{% url 'budget-detail' budget.pk %}">
+            <div>
+                <h3>{{ budget.category.name }}</h3>
+                <p class="meta">
+                    {{ budget.start_date|date:"M d, Y" }} –
+                    {{ budget.end_date|date:"M d, Y" }}
+                </p>
+                <p><strong>Amount:</strong> ${{ budget.amount|floatformat:2 }}</p>
+                <p><strong>Remaining:</strong> ${{ budget.remaining_amount|floatformat:2 }}</p>
+                <p><strong>Progress:</strong> {{ budget.percentage|floatformat:2 }}%</p>
+            </div>
+        </a>
+    </article>
+</li>
+

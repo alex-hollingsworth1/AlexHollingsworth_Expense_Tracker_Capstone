@@ -57,8 +57,7 @@ class Command(BaseCommand):
         Category.objects.bulk_create(categories)
 
         category_lookup = {
-            category.name: category
-            for category in Category.objects.all()
+            category.name: category for category in Category.objects.all()
         }
 
         expenses = [
