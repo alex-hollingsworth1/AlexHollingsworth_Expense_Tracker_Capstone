@@ -73,14 +73,17 @@ async function fetchDashboardData() {
     recent_income: [
       { id: 1, amount: '3500.00', date: '2024-12-01', category: { name: 'Salary' }, note: 'Monthly salary' },
       { id: 2, amount: '500.00', date: '2024-12-15', category: { name: 'Freelance' }, note: 'Website project' },
+      { id: 3, amount: '1000.00', date: '2024-12-10', category: { name: 'Investments' }, note: 'Stock market' },
     ],
     recent_budgets: [
       { id: 1, amount: '400.00', category: { name: 'Groceries' }, start_date: '2024-12-01', end_date: '2024-12-31' },
       { id: 2, amount: '100.00', category: { name: 'Entertainment' }, start_date: '2024-12-01', end_date: '2024-12-31' },
+      { id: 3, amount: '1000.00', category: { name: 'Car' }, start_date: '2024-12-01', end_date: '2024-12-31' },
     ],
     recent_goals: [
       { id: 1, name: 'Emergency Fund', target: '5000.00', deadline: '2025-06-01', status: 'On Track' },
       { id: 2, name: 'Vacation', target: '2000.00', deadline: '2025-08-01', status: 'Not Started' },
+      { id: 3, name: 'Car', target: '10000.00', deadline: '2026-01-01', status: 'On Track' },
     ],
     expense_total: 1250.50,
     income_total: 4000.00,
@@ -90,6 +93,71 @@ async function fetchDashboardData() {
   }
 }
 
+async function fetchExpenses() {
+  // TODO: Replace with real API call once Django endpoint is created
+  // return await apiRequest('/transactions/api/expenses/')
+  
+  // Mock data for now
+  return [
+    { id: 1, amount: '45.50', date: '2024-12-20', category: { name: 'Groceries' }, note: 'Weekly shopping' },
+    { id: 2, amount: '25.00', date: '2024-12-19', category: { name: 'Gas' }, note: 'Fuel' },
+    { id: 3, amount: '12.99', date: '2024-12-18', category: { name: 'Entertainment' }, note: 'Netflix' },
+    { id: 4, amount: '150.00', date: '2024-12-17', category: { name: 'Utilities' }, note: 'Electric bill' },
+    { id: 5, amount: '35.75', date: '2024-12-16', category: { name: 'Dining' }, note: 'Restaurant dinner' },
+  ]
+}
+
+async function fetchIncomes() {
+  return [
+    { id: 1, amount: '3500.00', date: '2024-12-01', category: { name: 'Salary' }, note: 'Monthly salary' },
+    { id: 2, amount: '500.00', date: '2024-12-15', category: { name: 'Freelance' }, note: 'Website project' },
+    { id: 3, amount: '1000.00', date: '2024-12-10', category: { name: 'Investments' }, note: 'Stock market' },
+    { id: 4, amount: '200.00', date: '2024-12-05', category: { name: 'Side Hustle' }, note: 'Tutoring' },
+    { id: 5, amount: '1500.00', date: '2024-12-01', category: { name: 'Bonus' }, note: 'Year-end bonus' },
+  ]
+}
+
+async function fetchBudgets() {
+  return [
+    { id: 1, amount: '400.00', category: { name: 'Groceries' }, start_date: '2024-12-01', end_date: '2024-12-31' },
+    { id: 2, amount: '100.00', category: { name: 'Entertainment' }, start_date: '2024-12-01', end_date: '2024-12-31' },
+    { id: 3, amount: '1000.00', category: { name: 'Car' }, start_date: '2024-12-01', end_date: '2024-12-31' },
+  ]
+}
+
+async function fetchGoals() {
+  return [
+    { id: 1, name: 'Emergency Fund', target: '5000.00', deadline: '2025-06-01', status: 'On Track' },
+    { id: 2, name: 'Vacation', target: '2000.00', deadline: '2025-08-01', status: 'Not Started' },
+    { id: 3, name: 'Car', target: '10000.00', deadline: '2026-01-01', status: 'On Track' },
+  ]
+}
+
+async function fetchExpense(id) {
+    // Get all expenses and find the one with matching ID
+    const expenses = await fetchExpenses()
+    return expenses.find(expense => expense.id === parseInt(id))
+}
+
+async function fetchBudget(id) {
+    // Get all budgets and find the one with matching ID
+    const budgets = await fetchBudgets()
+    return budgets.find(budget => budget.id === parseInt(id))
+}
+
+async function fetchIncome(id) {
+    // Get all income and find the one with matching ID
+    const incomes = await fetchIncomes()
+    return incomes.find(income => income.id === parseInt(id))
+}
+
+async function fetchGoal(id) {
+    // Get all goals and find the one with matching ID
+    const goals = await fetchGoals()
+    return goals.find(goal => goal.id === parseInt(id))
+}
+
+
 // Export all API functions
-export { apiRequest, API_BASE_URL, fetchDashboardData }
+export { apiRequest, API_BASE_URL, fetchDashboardData, fetchExpenses, fetchIncomes, fetchBudgets, fetchGoals, fetchExpense, fetchBudget, fetchIncome, fetchGoal }
 
