@@ -67,7 +67,9 @@ class Expense(models.Model):
 class Income(models.Model):
     """Income record with amount, date, note and category ID."""
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="incomes"
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     note = models.CharField(max_length=250, blank=True, null=True)
@@ -114,6 +116,7 @@ class Budget(models.Model):
         )
 
     class Meta:
+        """Meta class for the Budget model."""
         constraints = [
             models.UniqueConstraint(
                 fields=["category", "start_date", "end_date"],
@@ -123,14 +126,15 @@ class Budget(models.Model):
 
     def compute_remaining_and_percentage(self):
         """Compute remaining amount and percentage spent."""
-        total_spent = (
-            self.category.expenses.filter(date__range=(self.start_date, self.end_date))
-            .aggregate(total=Sum("amount"))["total"]
-            or Decimal("0")
-        )
+        total_spent = Expense.objects.filter(
+            category=self.category,
+            date__range=(self.start_date, self.end_date)
+        ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
         remaining = self.amount - total_spent
         percentage = (
-            Decimal("0") if self.amount == 0 else (total_spent / self.amount) * 100
+            Decimal("0")
+            if self.amount == 0
+            else (total_spent / self.amount) * 100
         )
         return remaining, percentage
 
