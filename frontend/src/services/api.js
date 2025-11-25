@@ -58,39 +58,8 @@ async function apiRequest(endpoint, options = {}) {
  * 
  * @returns {Promise<Object>} Dashboard data with expenses, income, budgets, goals, and totals
  */
-async function fetchDashboardData() {
-  // TODO: Replace with real API call once Django endpoint is created
-  // return await apiRequest('/transactions/api/dashboard/')
-  
-  // Mock data that matches what Django DashboardView returns
-  // This lets us build the UI before the API exists
-  return {
-    recent_expenses: [
-      { id: 1, amount: '45.50', date: '2024-12-20', category: { name: 'Groceries' }, note: 'Weekly shopping' },
-      { id: 2, amount: '25.00', date: '2024-12-19', category: { name: 'Gas' }, note: 'Fuel' },
-      { id: 3, amount: '12.99', date: '2024-12-18', category: { name: 'Entertainment' }, note: 'Netflix' },
-    ],
-    recent_income: [
-      { id: 1, amount: '3500.00', date: '2024-12-01', category: { name: 'Salary' }, note: 'Monthly salary' },
-      { id: 2, amount: '500.00', date: '2024-12-15', category: { name: 'Freelance' }, note: 'Website project' },
-      { id: 3, amount: '1000.00', date: '2024-12-10', category: { name: 'Investments' }, note: 'Stock market' },
-    ],
-    recent_budgets: [
-      { id: 1, amount: '400.00', category: { name: 'Groceries' }, start_date: '2024-12-01', end_date: '2024-12-31' },
-      { id: 2, amount: '100.00', category: { name: 'Entertainment' }, start_date: '2024-12-01', end_date: '2024-12-31' },
-      { id: 3, amount: '1000.00', category: { name: 'Car' }, start_date: '2024-12-01', end_date: '2024-12-31' },
-    ],
-    recent_goals: [
-      { id: 1, name: 'Emergency Fund', target: '5000.00', deadline: '2025-06-01', status: 'On Track' },
-      { id: 2, name: 'Vacation', target: '2000.00', deadline: '2025-08-01', status: 'Not Started' },
-      { id: 3, name: 'Car', target: '10000.00', deadline: '2026-01-01', status: 'On Track' },
-    ],
-    expense_total: 1250.50,
-    income_total: 4000.00,
-    net_total: 2749.50,
-    number_of_budgets: 2,
-    number_of_goals: 3,
-  }
+async function fetchDashboardData() {  
+  return await apiRequest("/api/dashboard/")
 }
 
 async function fetchExpenses() {
@@ -98,39 +67,19 @@ async function fetchExpenses() {
   // return await apiRequest('/transactions/api/expenses/')
   
   // Mock data for now
-  return [
-    { id: 1, amount: '45.50', date: '2024-12-20', category: { name: 'Groceries' }, note: 'Weekly shopping' },
-    { id: 2, amount: '25.00', date: '2024-12-19', category: { name: 'Gas' }, note: 'Fuel' },
-    { id: 3, amount: '12.99', date: '2024-12-18', category: { name: 'Entertainment' }, note: 'Netflix' },
-    { id: 4, amount: '150.00', date: '2024-12-17', category: { name: 'Utilities' }, note: 'Electric bill' },
-    { id: 5, amount: '35.75', date: '2024-12-16', category: { name: 'Dining' }, note: 'Restaurant dinner' },
-  ]
+  return await apiRequest("/expenses")
 }
 
 async function fetchIncomes() {
-  return [
-    { id: 1, amount: '3500.00', date: '2024-12-01', category: { name: 'Salary' }, note: 'Monthly salary' },
-    { id: 2, amount: '500.00', date: '2024-12-15', category: { name: 'Freelance' }, note: 'Website project' },
-    { id: 3, amount: '1000.00', date: '2024-12-10', category: { name: 'Investments' }, note: 'Stock market' },
-    { id: 4, amount: '200.00', date: '2024-12-05', category: { name: 'Side Hustle' }, note: 'Tutoring' },
-    { id: 5, amount: '1500.00', date: '2024-12-01', category: { name: 'Bonus' }, note: 'Year-end bonus' },
-  ]
+  return await apiRequest("/income")
 }
 
 async function fetchBudgets() {
-  return [
-    { id: 1, amount: '400.00', category: { name: 'Groceries' }, start_date: '2024-12-01', end_date: '2024-12-31' },
-    { id: 2, amount: '100.00', category: { name: 'Entertainment' }, start_date: '2024-12-01', end_date: '2024-12-31' },
-    { id: 3, amount: '1000.00', category: { name: 'Car' }, start_date: '2024-12-01', end_date: '2024-12-31' },
-  ]
+  return await apiRequest("/budgets")
 }
 
 async function fetchGoals() {
-  return [
-    { id: 1, name: 'Emergency Fund', target: '5000.00', deadline: '2025-06-01', status: 'On Track' },
-    { id: 2, name: 'Vacation', target: '2000.00', deadline: '2025-08-01', status: 'Not Started' },
-    { id: 3, name: 'Car', target: '10000.00', deadline: '2026-01-01', status: 'On Track' },
-  ]
+  return await apiRequest("/goals") 
 }
 
 async function fetchExpense(id) {

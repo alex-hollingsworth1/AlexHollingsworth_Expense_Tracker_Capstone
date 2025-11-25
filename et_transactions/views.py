@@ -1,11 +1,24 @@
 """Views for the et_transactions app."""
 
+# pylint: disable=no-member
+
 from django.contrib import messages
 from django.db.models import Sum
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import (
+    ExpenseSerializer,
+    CategorySerializer,
+    IncomeSerializer,
+    BudgetSerializer,
+    GoalSerializer,
+)
 
 from .forms import (
     CreateExpenseForm,
@@ -15,389 +28,449 @@ from .forms import (
 )
 from .models import Budget, Category, Expense, Goal, Income
 
-# ----------------------Dashboard View----------------------
+
+# # ----------------------Category Views----------------------
 
 
-class DashboardView(TemplateView):
-    """Display recent activity across expenses, income, budgets and
-    goals."""
+# class CategoryTypeListView(TemplateView):
+#     """Display available category types before drilling into
+#     categories."""
 
-    template_name = "et_transactions/dashboard.html"
+#     template_name = "et_transactions/category_type_list.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["recent_expenses"] = Expense.objects.order_by("-date")[:3]
-        context["recent_income"] = Income.objects.order_by("-date")[:3]
-        context["recent_budgets"] = Budget.objects.order_by("-start_date")[:3]
-        context["recent_goals"] = Goal.objects.order_by("deadline")[:3]
-        context["expense_total"] = (
-            Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
-        )
-        context["income_total"] = (
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["action_links"] = [
+#             {"label": "Add Expense", "url": reverse("create-expense")},
+#             {"label": "Add Income", "url": reverse("create-income")},
+#             {"label": "Add Budget", "url": reverse("create-budget")},
+#             {"label": "Add Goal", "url": reverse("create-goal")},
+#         ]
+#         return context
+
+
+# class CategoryListView(ListView):
+#     """List all transaction categories."""
+
+#     template_name = "et_transactions/category_list.html"
+#     model = Category
+#     ordering = ["name"]
+#     context_object_name = "categories"
+
+#     def get_queryset(self):
+#         queryset = super().get_queryset()
+#         selected_type = self.request.GET.get("type")
+#         if selected_type:
+#             queryset = queryset.filter(category_type=selected_type)
+#         return queryset
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         selected_type = self.request.GET.get("type")
+#         context["selected_type"] = selected_type
+#         if selected_type:
+#             type_map = dict(Category.CategoryType.choices)
+#             context["selected_type_label"] = type_map.get(
+#                 selected_type, selected_type.title()
+#             )
+#         return context
+
+
+# class CategoryDetailView(DetailView):
+#     """Display a single transaction category with all associated
+#     expenses."""
+
+#     template_name = "et_transactions/category_detail.html"
+#     model = Category
+#     context_object_name = "category"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["expenses"] = self.object.expenses.order_by("-date")
+#         return context
+
+
+# # ----------------------Expense Views----------------------
+
+
+# class ExpenseListView(ListView):
+#     """List recorded expenses."""
+
+#     template_name = "et_transactions/expense_list.html"
+#     model = Expense
+#     ordering = ["-date"]
+#     context_object_name = "expenses"
+
+
+# class ExpenseDetailView(DetailView):
+#     """Display a single transaction expense."""
+
+#     template_name = "et_transactions/expense_detail.html"
+#     model = Expense
+#     context_object_name = "expense"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["category"] = self.object.category
+#         return context
+
+
+# class CreateExpenseView(CreateView):
+#     """View for creating a new expense."""
+
+#     template_name = "et_transactions/create-expense.html"
+#     form_class = CreateExpenseForm
+#     success_url = reverse_lazy("expenses")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Expense created successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request,
+#             "Unable to create expense. Please fix the errors below.",
+#         )
+#         return super().form_invalid(form)
+
+
+# class ExpenseUpdateView(UpdateView):
+#     """View for updating an existing expense."""
+
+#     model = Expense
+#     form_class = CreateExpenseForm
+#     template_name = "et_transactions/update-expense.html"
+#     success_url = reverse_lazy("expenses")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Expense updated successfully.")
+#         return response
+
+
+# class ExpenseDeleteView(DeleteView):
+#     """View for deleting an existing expense."""
+
+#     model = Expense
+#     template_name = "et_transactions/confirm-delete-expense.html"
+#     success_url = reverse_lazy("expenses")
+
+#     def delete(self, request, *args, **kwargs):
+#         messages.success(request, "Expense deleted successfully.")
+#         return super().delete(request, *args, **kwargs)
+
+
+# # ----------------------Income Views----------------------
+
+
+# class IncomeListView(ListView):
+#     """List recorded income entries."""
+
+#     template_name = "et_transactions/income_list.html"
+#     model = Income
+#     ordering = ["-date"]
+#     context_object_name = "incomes"
+
+
+# class IncomeDetailView(DetailView):
+#     """Display a single transaction income."""
+
+#     template_name = "et_transactions/income-detail.html"
+#     model = Income
+#     context_object_name = "income"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["category"] = self.object.category
+#         return context
+
+
+# class CreateIncomeView(CreateView):
+#     """View for creating a new income."""
+
+#     template_name = "et_transactions/create-income.html"
+#     form_class = CreateIncomeForm
+#     success_url = reverse_lazy("income")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Income recorded successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request,
+#             "Unable to record income. Please fix the errors below.",
+#         )
+#         return super().form_invalid(form)
+
+
+# class IncomeUpdateView(UpdateView):
+#     """View for updating an existing income."""
+
+#     model = Income
+#     form_class = CreateIncomeForm
+#     template_name = "et_transactions/update-income.html"
+#     success_url = reverse_lazy("income")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Income updated successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request,
+#             "Unable to update income. Please fix the errors below.",
+#         )
+#         return super().form_invalid(form)
+
+
+# class IncomeDeleteView(DeleteView):
+#     """View for deleting an existing income."""
+
+#     model = Income
+#     template_name = "et_transactions/confirm-delete-income.html"
+#     success_url = reverse_lazy("income")
+
+#     def delete(self, request, *args, **kwargs):
+#         messages.success(request, "Income deleted successfully.")
+#         return super().delete(request, *args, **kwargs)
+
+
+# # ----------------------Budget Views----------------------
+
+
+# class BudgetListView(ListView):
+#     """List budgets for each category."""
+
+#     template_name = "et_transactions/budget_list.html"
+#     model = Budget
+#     ordering = ["start_date"]
+#     context_object_name = "budgets"
+
+
+# class BudgetDetailView(DetailView):
+#     """Display a single transaction budget."""
+
+#     template_name = "et_transactions/budget-detail.html"
+#     model = Budget
+#     context_object_name = "budget"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["category"] = self.object.category
+#         return context
+
+
+# class CreateBudgetView(CreateView):
+#     """View for creating a new budget."""
+
+#     template_name = "et_transactions/create-budget.html"
+#     form_class = CreateBudgetForm
+#     success_url = reverse_lazy("budgets")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Budget created successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request,
+#             "Unable to create budget. Please fix the errors below.",
+#         )
+#         return super().form_invalid(form)
+
+
+# class BudgetUpdateView(UpdateView):
+#     """View for updating an existing budget."""
+
+#     model = Budget
+#     form_class = CreateBudgetForm
+#     template_name = "et_transactions/update-budget.html"
+#     success_url = reverse_lazy("budgets")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Budget updated successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request,
+#             "Unable to update budget. Please fix the errors below.",
+#         )
+#         return super().form_invalid(form)
+
+
+# class BudgetDeleteView(DeleteView):
+#     """View for deleting an existing budget."""
+
+#     model = Budget
+#     template_name = "et_transactions/confirm-delete-budget.html"
+#     success_url = reverse_lazy("budgets")
+
+#     def delete(self, request, *args, **kwargs):
+#         messages.success(request, "Budget deleted successfully.")
+#         return super().delete(request, *args, **kwargs)
+
+
+# # ----------------------Goal Views----------------------
+
+
+# class GoalListView(ListView):
+#     """List financial goals and their status."""
+
+#     template_name = "et_transactions/goal_list.html"
+#     model = Goal
+#     ordering = ["deadline"]
+#     context_object_name = "goals"
+
+
+# class GoalDetailView(DetailView):
+#     """Display a single financial goal."""
+
+#     template_name = "et_transactions/goal-detail.html"
+#     model = Goal
+#     context_object_name = "goal"
+
+
+# class CreateGoalView(CreateView):
+#     """View for creating a new goal."""
+
+#     template_name = "et_transactions/create-goal.html"
+#     form_class = CreateGoalForm
+#     success_url = reverse_lazy("goals")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Goal created successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request, "Unable to create goal. Please fix the errors below."
+#         )
+#         return super().form_invalid(form)
+
+
+# class GoalUpdateView(UpdateView):
+#     """View for updating an existing goal."""
+
+#     model = Goal
+#     form_class = CreateGoalForm
+#     template_name = "et_transactions/update-goal.html"
+#     success_url = reverse_lazy("goals")
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         messages.success(self.request, "Goal updated successfully.")
+#         return response
+
+#     def form_invalid(self, form):
+#         messages.error(
+#             self.request, "Unable to update goal. Please fix the errors below."
+#         )
+#         return super().form_invalid(form)
+
+
+# class GoalDeleteView(DeleteView):
+#     """View for deleting an existing goal."""
+
+#     model = Goal
+#     template_name = "et_transactions/confirm-delete-goal.html"
+#     success_url = reverse_lazy("goals")
+
+#     def delete(self, request, *args, **kwargs):
+#         messages.success(request, "Goal deleted successfully.")
+#         return super().delete(request, *args, **kwargs)
+
+
+# ----------------------API Views (DRF)----------------------
+
+
+class ExpenseViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows expenses to be viewed or edited.
+    """
+
+    queryset = Expense.objects.all().order_by("-date")
+    serializer_class = ExpenseSerializer
+
+
+class IncomeViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows income to be viewed or edited.
+    """
+
+    queryset = Income.objects.all().order_by("-date")
+    serializer_class = IncomeSerializer
+
+
+class BudgetViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows budgets to be viewed or edited.
+    """
+
+    queryset = Budget.objects.all().order_by("-start_date")
+    serializer_class = BudgetSerializer
+
+
+class GoalViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows goals to be viewed or edited.
+    """
+
+    queryset = Goal.objects.all().order_by("deadline")
+    serializer_class = GoalSerializer
+
+
+class DashboardAPIView(APIView):
+    """
+    API endpoint that returns dashboard summary data.
+    Combines expenses, income, budgets, and goals with totals.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+
+        # Query-set for recent expenses, income, budgets, and goals
+        recent_expenses = Expense.objects.order_by("-date")[:3]
+        recent_income = Income.objects.order_by("-date")[:3]
+        recent_budgets = Budget.objects.order_by("-start_date")[:3]
+        recent_goals = Goal.objects.order_by("deadline")[:3]
+        income_total = (
             Income.objects.aggregate(total=Sum("amount"))["total"] or 0
         )
-        context["net_total"] = (
-            context["income_total"] - context["expense_total"]
+        expense_total = (
+            Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
         )
-        context["number_of_budgets"] = Budget.objects.count()
-        context["number_of_goals"] = Goal.objects.count()
-        return context
+        net_total = income_total - expense_total
+        number_of_budgets = Budget.objects.count()
+        number_of_goals = Goal.objects.count()
 
-
-# ----------------------Category Views----------------------
-
-
-class CategoryTypeListView(TemplateView):
-    """Display available category types before drilling into
-    categories."""
-
-    template_name = "et_transactions/category_type_list.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["action_links"] = [
-            {"label": "Add Expense", "url": reverse("create-expense")},
-            {"label": "Add Income", "url": reverse("create-income")},
-            {"label": "Add Budget", "url": reverse("create-budget")},
-            {"label": "Add Goal", "url": reverse("create-goal")},
-        ]
-        return context
-
-
-class CategoryListView(ListView):
-    """List all transaction categories."""
-
-    template_name = "et_transactions/category_list.html"
-    model = Category
-    ordering = ["name"]
-    context_object_name = "categories"
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        selected_type = self.request.GET.get("type")
-        if selected_type:
-            queryset = queryset.filter(category_type=selected_type)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        selected_type = self.request.GET.get("type")
-        context["selected_type"] = selected_type
-        if selected_type:
-            type_map = dict(Category.CategoryType.choices)
-            context["selected_type_label"] = type_map.get(
-                selected_type, selected_type.title()
-            )
-        return context
-
-
-class CategoryDetailView(DetailView):
-    """Display a single transaction category with all associated
-    expenses."""
-
-    template_name = "et_transactions/category_detail.html"
-    model = Category
-    context_object_name = "category"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["expenses"] = self.object.expenses.order_by("-date")
-        return context
-
-
-# ----------------------Expense Views----------------------
-
-
-class ExpenseListView(ListView):
-    """List recorded expenses."""
-
-    template_name = "et_transactions/expense_list.html"
-    model = Expense
-    ordering = ["-date"]
-    context_object_name = "expenses"
-
-
-class ExpenseDetailView(DetailView):
-    """Display a single transaction expense."""
-
-    template_name = "et_transactions/expense_detail.html"
-    model = Expense
-    context_object_name = "expense"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["category"] = self.object.category
-        return context
-
-
-class CreateExpenseView(CreateView):
-    """View for creating a new expense."""
-
-    template_name = "et_transactions/create-expense.html"
-    form_class = CreateExpenseForm
-    success_url = reverse_lazy("expenses")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Expense created successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Unable to create expense. Please fix the errors below.",
+        # Serialize the data
+        recent_expenses_serializer = ExpenseSerializer(
+            recent_expenses, many=True
         )
-        return super().form_invalid(form)
-
-
-class ExpenseUpdateView(UpdateView):
-    """View for updating an existing expense."""
-
-    model = Expense
-    form_class = CreateExpenseForm
-    template_name = "et_transactions/update-expense.html"
-    success_url = reverse_lazy("expenses")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Expense updated successfully.")
-        return response
-
-
-class ExpenseDeleteView(DeleteView):
-    """View for deleting an existing expense."""
-
-    model = Expense
-    template_name = "et_transactions/confirm-delete-expense.html"
-    success_url = reverse_lazy("expenses")
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "Expense deleted successfully.")
-        return super().delete(request, *args, **kwargs)
-
-
-# ----------------------Income Views----------------------
-
-
-class IncomeListView(ListView):
-    """List recorded income entries."""
-
-    template_name = "et_transactions/income_list.html"
-    model = Income
-    ordering = ["-date"]
-    context_object_name = "incomes"
-
-
-class IncomeDetailView(DetailView):
-    """Display a single transaction income."""
-
-    template_name = "et_transactions/income-detail.html"
-    model = Income
-    context_object_name = "income"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["category"] = self.object.category
-        return context
-
-
-class CreateIncomeView(CreateView):
-    """View for creating a new income."""
-
-    template_name = "et_transactions/create-income.html"
-    form_class = CreateIncomeForm
-    success_url = reverse_lazy("income")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Income recorded successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Unable to record income. Please fix the errors below.",
-        )
-        return super().form_invalid(form)
-
-
-class IncomeUpdateView(UpdateView):
-    """View for updating an existing income."""
-
-    model = Income
-    form_class = CreateIncomeForm
-    template_name = "et_transactions/update-income.html"
-    success_url = reverse_lazy("income")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Income updated successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Unable to update income. Please fix the errors below.",
-        )
-        return super().form_invalid(form)
-
-
-class IncomeDeleteView(DeleteView):
-    """View for deleting an existing income."""
-
-    model = Income
-    template_name = "et_transactions/confirm-delete-income.html"
-    success_url = reverse_lazy("income")
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "Income deleted successfully.")
-        return super().delete(request, *args, **kwargs)
-
-
-# ----------------------Budget Views----------------------
-
-
-class BudgetListView(ListView):
-    """List budgets for each category."""
-
-    template_name = "et_transactions/budget_list.html"
-    model = Budget
-    ordering = ["start_date"]
-    context_object_name = "budgets"
-
-
-class BudgetDetailView(DetailView):
-    """Display a single transaction budget."""
-
-    template_name = "et_transactions/budget-detail.html"
-    model = Budget
-    context_object_name = "budget"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["category"] = self.object.category
-        return context
-
-
-class CreateBudgetView(CreateView):
-    """View for creating a new budget."""
-
-    template_name = "et_transactions/create-budget.html"
-    form_class = CreateBudgetForm
-    success_url = reverse_lazy("budgets")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Budget created successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Unable to create budget. Please fix the errors below.",
-        )
-        return super().form_invalid(form)
-
-
-class BudgetUpdateView(UpdateView):
-    """View for updating an existing budget."""
-
-    model = Budget
-    form_class = CreateBudgetForm
-    template_name = "et_transactions/update-budget.html"
-    success_url = reverse_lazy("budgets")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Budget updated successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Unable to update budget. Please fix the errors below.",
-        )
-        return super().form_invalid(form)
-
-
-class BudgetDeleteView(DeleteView):
-    """View for deleting an existing budget."""
-
-    model = Budget
-    template_name = "et_transactions/confirm-delete-budget.html"
-    success_url = reverse_lazy("budgets")
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "Budget deleted successfully.")
-        return super().delete(request, *args, **kwargs)
-
-
-# ----------------------Goal Views----------------------
-
-
-class GoalListView(ListView):
-    """List financial goals and their status."""
-
-    template_name = "et_transactions/goal_list.html"
-    model = Goal
-    ordering = ["deadline"]
-    context_object_name = "goals"
-
-
-class GoalDetailView(DetailView):
-    """Display a single financial goal."""
-
-    template_name = "et_transactions/goal-detail.html"
-    model = Goal
-    context_object_name = "goal"
-
-
-class CreateGoalView(CreateView):
-    """View for creating a new goal."""
-
-    template_name = "et_transactions/create-goal.html"
-    form_class = CreateGoalForm
-    success_url = reverse_lazy("goals")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Goal created successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request, "Unable to create goal. Please fix the errors below."
-        )
-        return super().form_invalid(form)
-
-
-class GoalUpdateView(UpdateView):
-    """View for updating an existing goal."""
-
-    model = Goal
-    form_class = CreateGoalForm
-    template_name = "et_transactions/update-goal.html"
-    success_url = reverse_lazy("goals")
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Goal updated successfully.")
-        return response
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request, "Unable to update goal. Please fix the errors below."
-        )
-        return super().form_invalid(form)
-
-
-class GoalDeleteView(DeleteView):
-    """View for deleting an existing goal."""
-
-    model = Goal
-    template_name = "et_transactions/confirm-delete-goal.html"
-    success_url = reverse_lazy("goals")
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "Goal deleted successfully.")
-        return super().delete(request, *args, **kwargs)
+        recent_income_serializer = IncomeSerializer(recent_income, many=True)
+        recent_budgets_serializer = BudgetSerializer(recent_budgets, many=True)
+        recent_goals_serializer = GoalSerializer(recent_goals, many=True)
+
+        # Numbers don't need serialization - use them directly
+        data = {
+            "recent_expenses": recent_expenses_serializer.data,
+            "recent_income": recent_income_serializer.data,
+            "recent_budgets": recent_budgets_serializer.data,
+            "recent_goals": recent_goals_serializer.data,
+            "income_total": income_total,
+            "expense_total": expense_total,
+            "net_total": net_total,
+            "number_of_budgets": number_of_budgets,
+            "number_of_goals": number_of_goals,
+        }
+
+        return Response(data)
