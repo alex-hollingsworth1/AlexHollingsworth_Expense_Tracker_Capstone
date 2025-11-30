@@ -26,7 +26,7 @@ async function apiRequest(endpoint, options = {}) {
     'Content-Type': 'application/json',
   }
 
-  const token = localStorage.getItem('access_token'); 
+  const token = localStorage.getItem('access_token');
 
   if (token) {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
@@ -144,16 +144,49 @@ async function loginUser(username, password) {
   }
 }
 
+async function refreshAccessToken() {
+  const refreshToken = localStorage.getItem("refresh_token");
+
+  if (!refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ refresh: localStorage.getItem("refresh_token") })
+    });
+
+  if (!response.ok) {
+    throw new Error("Token refresh failed.")
+  }
+
+  const data = await response.json()
+  localStorage.setItem('access_token', data.access);
+  return data.access
+} catch (error) {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token")
+  throw error;
+  }
+}
+
 // Export all API functions
-export { apiRequest, 
-  API_BASE_URL, 
-  fetchDashboardData, 
-  fetchExpenses, 
-  fetchIncomes, 
-  fetchBudgets, 
-  fetchGoals, 
-  fetchExpense, 
-  fetchBudget, 
-  fetchIncome, 
-  fetchGoal, 
-  loginUser }
+export {
+  apiRequest,
+  API_BASE_URL,
+  fetchDashboardData,
+  fetchExpenses,
+  fetchIncomes,
+  fetchBudgets,
+  fetchGoals,
+  fetchExpense,
+  fetchBudget,
+  fetchIncome,
+  fetchGoal,
+  loginUser,
+  refreshAccessToken,
+}

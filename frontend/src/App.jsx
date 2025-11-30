@@ -10,22 +10,24 @@ import BudgetDetail from './pages/BudgetDetail'
 import IncomeDetail from './pages/IncomeDetail'
 import GoalDetail from './pages/GoalDetail'
 import Login from './pages/Login'
+import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
+import RedirectIfAuthenticated from './components/RedirectIfAuthenticated'
 
 function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Login/>}/>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/expenses" element={<ExpenseList />} />
-        <Route path="/income" element={<IncomeList />} />
-        <Route path="/budgets" element={<BudgetList />} />
-        <Route path="/goals" element={<GoalList />} />
-        <Route path="/expenses/:id" element={<ExpenseDetail />} />
-        <Route path="/budgets/:id" element={<BudgetDetail />} />
-        <Route path="/income/:id" element={<IncomeDetail />} />
-        <Route path="/goals/:id" element={<GoalDetail />} />
+        <Route path="/" element={<RedirectIfAuthenticated><Login/></RedirectIfAuthenticated>}/>
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/expenses" element={<ProtectedRoute><ExpenseList /></ProtectedRoute>} />
+        <Route path="/income" element={<ProtectedRoute><IncomeList /></ProtectedRoute>} />
+        <Route path="/budgets" element={<ProtectedRoute><BudgetList /></ProtectedRoute>} />
+        <Route path="/goals" element={<ProtectedRoute><GoalList /></ProtectedRoute>} />
+        <Route path="/expenses/:id" element={<ProtectedRoute><ExpenseDetail /></ProtectedRoute>} />
+        <Route path="/budgets/:id" element={<ProtectedRoute><BudgetDetail /></ProtectedRoute>} />
+        <Route path="/income/:id" element={<ProtectedRoute><IncomeDetail /></ProtectedRoute>} />
+        <Route path="/goals/:id" element={<ProtectedRoute><GoalDetail /></ProtectedRoute>} />
       </Routes>
     </Layout>
   )
