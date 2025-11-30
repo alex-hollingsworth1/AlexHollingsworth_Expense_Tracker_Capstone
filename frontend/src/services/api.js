@@ -20,12 +20,18 @@ const API_BASE_URL = 'http://localhost:8000'
  */
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`
-  
+
   // Set default headers
   const defaultHeaders = {
     'Content-Type': 'application/json',
   }
-  
+
+  const token = localStorage.getItem('access_token'); 
+
+  if (token) {
+    defaultHeaders['Authorization'] = `Bearer ${token}`;
+  }
+
   const config = {
     ...options,
     headers: {
@@ -33,15 +39,15 @@ async function apiRequest(endpoint, options = {}) {
       ...options.headers,
     },
   }
-  
+
   try {
     const response = await fetch(url, config)
-    
+
     // Check if response is ok (status 200-299)
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`)
     }
-    
+
     // Parse and return JSON response
     const data = await response.json()
     return data
@@ -58,15 +64,11 @@ async function apiRequest(endpoint, options = {}) {
  * 
  * @returns {Promise<Object>} Dashboard data with expenses, income, budgets, goals, and totals
  */
-async function fetchDashboardData() {  
+async function fetchDashboardData() {
   return await apiRequest("/api/dashboard/")
 }
 
 async function fetchExpenses() {
-  // TODO: Replace with real API call once Django endpoint is created
-  // return await apiRequest('/transactions/api/expenses/')
-  
-  // Mock data for now
   return await apiRequest("/expenses")
 }
 
@@ -79,34 +81,79 @@ async function fetchBudgets() {
 }
 
 async function fetchGoals() {
-  return await apiRequest("/goals") 
+  return await apiRequest("/goals")
 }
 
 async function fetchExpense(id) {
-    // Get all expenses and find the one with matching ID
-    const expenses = await fetchExpenses()
-    return expenses.find(expense => expense.id === parseInt(id))
+  // Get all expenses and find the one with matching ID
+  const expenses = await fetchExpenses()
+  return expenses.find(expense => expense.id === parseInt(id))
 }
 
 async function fetchBudget(id) {
-    // Get all budgets and find the one with matching ID
-    const budgets = await fetchBudgets()
-    return budgets.find(budget => budget.id === parseInt(id))
+  // Get all budgets and find the one with matching ID
+  const budgets = await fetchBudgets()
+  return budgets.find(budget => budget.id === parseInt(id))
 }
 
 async function fetchIncome(id) {
-    // Get all income and find the one with matching ID
-    const incomes = await fetchIncomes()
-    return incomes.find(income => income.id === parseInt(id))
+  // Get all income and find the one with matching ID
+  const incomes = await fetchIncomes()
+  return incomes.find(income => income.id === parseInt(id))
 }
 
 async function fetchGoal(id) {
-    // Get all goals and find the one with matching ID
-    const goals = await fetchGoals()
-    return goals.find(goal => goal.id === parseInt(id))
+  // Get all goals and find the one with matching ID
+  const goals = await fetchGoals()
+  return goals.find(goal => goal.id === parseInt(id))
 }
 
 
-// Export all API functions
-export { apiRequest, API_BASE_URL, fetchDashboardData, fetchExpenses, fetchIncomes, fetchBudgets, fetchGoals, fetchExpense, fetchBudget, fetchIncome, fetchGoal }
+async function loginUser(username, password) {
+  // Prepare the data
+  const loginData = {
+    username: username,
+    password: password
+  }
 
+  try {
+
+    const response = await fetch(`${API_BASE_URL}/api/token/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(loginData)
+    });
+
+    if (!response.ok) {
+      // If password is wrong, response.ok will be false
+      throw new Error('Login failed');
+    }
+
+    const data = await response.json();
+
+    // Store the tokens so apiRequest can find them later
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('refresh_token', data.refresh);
+
+    return data;
+  } catch (error) {
+    console.error("Login Error:", error)
+    throw error
+  }
+}
+
+// Export all API functions
+export { apiRequest, 
+  API_BASE_URL, 
+  fetchDashboardData, 
+  fetchExpenses, 
+  fetchIncomes, 
+  fetchBudgets, 
+  fetchGoals, 
+  fetchExpense, 
+  fetchBudget, 
+  fetchIncome, 
+  fetchGoal, 
+  loginUser }

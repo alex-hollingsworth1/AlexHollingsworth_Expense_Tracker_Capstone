@@ -98,8 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": (
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
+            "django.contrib.auth.password_validation." "MinimumLengthValidator"
         ),
     },
     {
@@ -141,11 +140,14 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    # 1. This tells DRF: "Check for a JWT token to see WHO the user is"
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    # 2. This tells DRF: "Now that we know who they are, WHAT can they do?"
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
+    ],
 }
 
 # CORS settings

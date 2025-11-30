@@ -9,13 +9,15 @@ import ExpenseDetail from './pages/ExpenseDetail'
 import BudgetDetail from './pages/BudgetDetail'
 import IncomeDetail from './pages/IncomeDetail'
 import GoalDetail from './pages/GoalDetail'
+import Login from './pages/Login'
 import './App.css'
 
 function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Login/>}/>
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/expenses" element={<ExpenseList />} />
         <Route path="/income" element={<IncomeList />} />
         <Route path="/budgets" element={<BudgetList />} />
