@@ -1,148 +1,306 @@
 # Expense & Budget Tracker
 
-A command-line expense tracker application built in **Python** with an **SQLite database** for the **HyperionDev Software Engineering Bootcamp Capstone Project (Option 1)**.
+A full-stack web application for tracking expenses, income, budgets, and financial goals. Built with **React** (frontend) and **Django REST Framework** (backend) with **SQLite database**.
+
+Originally developed as a command-line application for the **HyperionDev Software Engineering Bootcamp Capstone Project**, now evolved into a modern web application.
 
 ---
 
-## Requirements Met
-All 11 requirements from the Capstone PDF successfully implemented:
+## Features
 
-- Add new expense/income categories to database  
-- Track spending and income  
-- View expense/income categories  
-- View expenses/income by category
-- Set budget for a category
-- View budget for a category
-- Set financial goals  
-- View progress towards financial goals  
-- SQLite database connection and tables  
-- Menu system (extended with 14 options vs 11 required)  
-- Calculate user's budget based on income and expenses  
+### Authentication & Security
+- JWT-based authentication
+- Protected routes for authenticated users only
+- User-specific data isolation
+- Secure token storage and refresh
+
+### Transaction Management
+- **Create** expenses and income with category, date, amount, and notes
+- **View** all transactions in organized lists
+- **Edit** existing expenses and income
+- **Delete** transactions (coming soon)
+- Filter by category and date range
+
+### Budget System
+- Create budgets for categories with start/end dates
+- Track spending percentage and remaining amount
+- Automatic calculation of budget progress
+- View budgets by category
+
+### Goal Tracking
+- Set financial goals with target amounts and deadlines
+- Track progress with status indicators (Not Started, In Progress, Completed)
+- View goals with remaining amounts and deadlines
+
+### Dashboard
+- Overview of total income and expenses
+- Recent transactions display
+- Quick navigation to detail pages
+- Summary statistics
 
 ---
 
-## Additional Features (Beyond Requirements)
-- Update transaction amounts (Option 7): Modify existing expense/income records  
-- Edit/Update budget (Option 13): Change budget amounts, spending, or notes  
-- Recurring budgets: Support for daily/weekly/monthly/yearly periods  
-- One-off budgets: Time-bound with start/end dates  
-- Input validation: Robust error handling across all inputs  
-- Test data generator: Quickly populate the database with sample data  
-- Delete category function: Admin-only, not exposed in menu, with safeguards  
+## Tech Stack
+
+### Frontend
+- **React** - UI framework
+- **React Router** - Client-side routing
+- **Vite** - Build tool and dev server
+- **CSS3** - Styling
+
+### Backend
+- **Django** - Web framework
+- **Django REST Framework** - API development
+- **Django REST Framework Simple JWT** - Authentication
+- **SQLite** - Database
 
 ---
 
 ## Installation & Setup
 
 ### Prerequisites
-- Python 3.x  
-- SQLite3 (included with Python)
+- Python 3.11+
+- Node.js 18+ and npm
+- Git
+
+### Backend Setup
+
+```bash
+# Navigate to project directory
+cd AlexHollingsworth_Expense_Tracker_Capstone
+
+# Create virtual environment (if not exists)
+python -m venv venv
+
+# Activate virtual environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run migrations
+python manage.py migrate
+
+# (Optional) Create superuser
+python manage.py createsuperuser
+
+# (Optional) Populate with demo data
+python manage.py seed_demo
+
+# Start Django development server
+python manage.py runserver
+```
+
+The backend API will be available at `http://localhost:8000`
+
+### Frontend Setup
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The frontend will be available at `http://localhost:5173` (or the port Vite assigns)
+
+---
+
+## Usage
 
 ### Getting Started
 
-```bash
-# Clone repository
-git clone [your-repo-url]
-cd expense-tracker
+1. **Start Backend**: Run `python manage.py runserver` in the project root
+2. **Start Frontend**: Run `npm run dev` in the `frontend` directory
+3. **Access Application**: Open `http://localhost:5173` in your browser
+4. **Login**: Use your superuser credentials or create a new account
 
-# (Optional) Populate with test data
-python test_data.py
+### Creating Transactions
 
-# Start the application
-python main.py
+- Click **Create** in the navigation bar
+- Select **Expense** or **Income**
+- Fill in the form (amount, date, category, optional note)
+- Submit to save
+
+### Managing Budgets
+
+- Click **Create** → **Budget**
+- Select a category
+- Enter amount, start date, and end date
+- Budget progress is calculated automatically
+
+### Setting Goals
+
+- Click **Create** → **Goal**
+- Enter goal name, target amount, deadline, and status
+- Track your progress toward financial goals
+
+### Editing Transactions
+
+- Navigate to **Expenses** or **Income** list
+- Click on any transaction card
+- Click **Edit** button
+- Update fields and save
+
+---
+
+## API Endpoints
+
+### Authentication
+- `POST /api/token/` - Login (obtain access token)
+- `POST /api/token/refresh/` - Refresh access token
+
+### Transactions
+- `GET /expenses/` - List all expenses (user-specific)
+- `POST /expenses/` - Create new expense
+- `GET /expenses/{id}/` - Get expense details
+- `PUT /expenses/{id}/` - Update expense
+- `GET /income/` - List all income (user-specific)
+- `POST /income/` - Create new income
+
+### Budgets & Goals
+- `GET /budgets/` - List all budgets (user-specific)
+- `POST /budgets/` - Create new budget
+- `GET /goals/` - List all goals (user-specific)
+- `POST /goals/` - Create new goal
+
+### Categories
+- `GET /categories/` - List all categories
+
+### Dashboard
+- `GET /api/dashboard/` - Get dashboard summary data
+
+---
+
+## Project Structure
+
+```
+AlexHollingsworth_Expense_Tracker_Capstone/
+├── et_transactions/          # Django app
+│   ├── models.py             # Database models
+│   ├── views.py              # API ViewSets
+│   ├── serializers.py        # DRF serializers
+│   └── management/commands/  # Custom commands
+│       └── seed_demo.py      # Demo data seeder
+├── expense_tracker/          # Django project settings
+│   ├── settings.py           # Django configuration
+│   └── urls.py               # URL routing
+├── frontend/                 # React application
+│   ├── src/
+│   │   ├── components/      # Reusable components
+│   │   ├── contexts/        # React Context (Auth)
+│   │   ├── pages/           # Page components
+│   │   └── services/        # API service layer
+│   └── package.json
+├── db.sqlite3               # SQLite database
+└── requirements.txt         # Python dependencies
 ```
 
 ---
 
-# Usage
-The application provides a command-line menu system with 14 available options:
+## Key Features Implementation
 
-- Add expense  
-- View expenses  
-- View expenses by category  
-- Add income  
-- View income  
-- View income by category  
-- Update transaction  
-- Set budget for a category  
-- View budget for a category  
-- Set financial goals  
-- View progress towards financial goals  
-- Calculate overall budget  
-- Edit/Update budget  
-- Quit  
+### User Authentication
+- JWT tokens stored in localStorage
+- Automatic token refresh
+- Protected routes redirect unauthenticated users
+- Login page redirects authenticated users
 
----
+### User-Specific Data
+- All transactions, budgets, and goals are filtered by authenticated user
+- Foreign key relationships ensure data isolation
+- Automatic user assignment on creation
 
-## Key Features
-
-### Transaction Management
-- Add expenses and income with category, date, and optional note  
-- View all transactions or filter by category  
-- Update existing transaction amounts  
-
-### Budget System
-- Create one-off or recurring budgets (daily/weekly/monthly/yearly)  
-- Track spending percentage and remaining amount  
-- Edit budget amount, current spending, or notes  
-
-### Goal Tracking
-- Set financial goals with target amounts and deadlines  
-- View progress, remaining amount, and days remaining  
-- Status options: On Track, Not Started, Behind Schedule, Completed  
-
-### Database Schema
-- categories - expense/income categories  
-- expenses - expense transactions  
-- income - income transactions  
-- budgets - category budgets with remaining/percentage fields  
-- goals - financial goals with deadline and status  
-- Foreign key constraints enforced with `PRAGMA foreign_keys = ON` for data integrity  
+### Form Handling
+- Client-side form validation
+- Success/error message display
+- Form reset after successful submission
+- Loading states (spinner CSS included)
 
 ---
 
-## Testing
+## Development
 
+### Running Tests
 ```bash
-python test_data.py   # Creates sample categories, transactions, budgets, and goals
-python main.py        # Start testing with populated data
+# Backend tests
+python manage.py test
+
+# Frontend (if tests are set up)
+cd frontend
+npm test
+```
+
+### Database Migrations
+```bash
+# Create migrations after model changes
+python manage.py makemigrations
+
+# Apply migrations
+python manage.py migrate
+```
+
+### Building for Production
+```bash
+# Frontend build
+cd frontend
+npm run build
+
+# Backend (use production WSGI server)
+# Configure production settings in settings.py
 ```
 
 ---
 
 ## Design Decisions
-- Modular architecture: Each feature separated into its own module with relevant imports.  
-- Foreign key enforcement: Prevents orphaned records and maintains table relationships  
-- Utility functions: Centralised validation reduces duplication  
-- Table formatting: Consistent, readable transaction displays  
-- Category protection: Cannot delete categories with linked records  
+
+### Backend
+- **Django REST Framework**: Provides automatic CRUD endpoints via ModelViewSet
+- **JWT Authentication**: Stateless authentication suitable for SPA
+- **User Foreign Keys**: All models linked to User for multi-user support
+- **Serializer Pattern**: Read-only category objects, write-only category_id for clean API
+
+### Frontend
+- **React Context**: Global authentication state management
+- **Protected Routes**: Route-level authentication guards
+- **API Service Layer**: Centralized API calls with error handling
+- **Component-Based**: Reusable form components for Create/Edit operations
 
 ---
 
-## Implementation Notes
-- Redundant functions:  
-  - view_expenses_by_category and view_income_by_category were implemented to explicitly meet requirements, though filtering is already available in view_expenses and view_income.  
+## Known Limitations & Future Enhancements
 
-- Admin functions:  
-  - delete_category exists but is not exposed in the menu. It prevents deletion of categories with linked transactions.  
+### Current Limitations
+- Delete functionality not yet implemented
+- No pagination for large lists
+- No advanced filtering/search
+- No data export functionality
+- No data visualization/charts
 
-- Design choices explained:  
-  - .get() used in test_data.py to safely fetch categories with defaults, avoiding KeyError.  
-  - Chained commands used in several places for concise calculations and inline updates.  
-  - next() in budgets.py quickly finds the first matching budget tuple by ID.  
-  - Triple-quoted strings for multi-line SQL queries (better readability); single quotes for short queries.  
-
----
-
-## Known Limitations
-- No data export functionality  
-- Single-user system (no multi-user support)  
-- Command-line only (no GUI)  
-- 30-character limit on notes (for CLI database viewing purposes) 
+### Planned Enhancements
+- Loading spinners during API calls
+- Form validation improvements
+- Date range filtering
+- Category management UI
+- Data visualization (charts)
+- Export to CSV/PDF
+- Pagination for lists
 
 ---
 
 ## Author
 Alex Hollingsworth  
 HyperionDev Software Engineering Bootcamp  
-Capstone Project - 1st September 2025
+Capstone Project - 2024
+
+---
+
+## License
+This project was created as part of a coding bootcamp capstone project.
