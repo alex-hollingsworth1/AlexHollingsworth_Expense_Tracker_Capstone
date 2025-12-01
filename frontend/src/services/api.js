@@ -43,7 +43,6 @@ async function apiRequest(endpoint, options = {}) {
   try {
     const response = await fetch(url, config)
 
-    // Check if response is ok (status 200-299)
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`)
     }
@@ -58,10 +57,6 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 /**
- * Fetch dashboard data
- * This will eventually call: GET /transactions/api/dashboard/
- * For now, returns mock data until we create the Django API endpoint
- * 
  * @returns {Promise<Object>} Dashboard data with expenses, income, budgets, goals, and totals
  */
 async function fetchDashboardData() {
@@ -69,19 +64,23 @@ async function fetchDashboardData() {
 }
 
 async function fetchExpenses() {
-  return await apiRequest("/expenses")
+  return await apiRequest("/expenses/")
 }
 
 async function fetchIncomes() {
-  return await apiRequest("/income")
+  return await apiRequest("/income/")
 }
 
 async function fetchBudgets() {
-  return await apiRequest("/budgets")
+  return await apiRequest("/budgets/")
 }
 
 async function fetchGoals() {
-  return await apiRequest("/goals")
+  return await apiRequest("/goals/")
+}
+
+async function fetchCategories() {
+  return await apiRequest("/categories/")
 }
 
 async function fetchExpense(id) {
@@ -174,6 +173,49 @@ async function refreshAccessToken() {
   }
 }
 
+async function createExpense(expenseData) {
+  const createdExpense = await apiRequest("/expenses/", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(expenseData)
+  });
+  return createdExpense;
+}
+
+async function createIncome(incomeData) {
+  const createdIncome = await apiRequest("/income/", {
+    method: 'POST',
+    body: JSON.stringify(incomeData)
+  });
+  return createdIncome;
+}
+
+async function updateExpense(id, expenseData) {
+  const updatedExpense = await apiRequest(`/expenses/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(expenseData)
+  });
+  return updatedExpense;
+}
+
+async function createBudget(budgetData) {
+  const createdBudget = await apiRequest("/budgets/", {
+    method: 'POST',
+    body: JSON.stringify(budgetData)
+  });
+  return createdBudget;
+}
+
+async function createGoal(goalData) {
+  const createdGoal = await apiRequest("/goals/", {
+    method: 'POST',
+    body: JSON.stringify(goalData)
+  });
+  return createdGoal;
+}
+
 // Export all API functions
 export {
   apiRequest,
@@ -189,4 +231,10 @@ export {
   fetchGoal,
   loginUser,
   refreshAccessToken,
+  fetchCategories,
+  createExpense,
+  createIncome,
+  updateExpense,
+  createBudget,
+  createGoal
 }

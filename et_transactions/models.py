@@ -4,8 +4,10 @@ Budget, and Goal.
 Mirrors the CLI/SQLite schema to ease migration.
 """
 
-from decimal import Decimal
+# pylint: disable=no-member
 
+from decimal import Decimal
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
 
@@ -35,7 +37,8 @@ class Category(models.Model):
 
     class Meta:
         """Meta class for the Category model."""
-
+        verbose_name = "category"
+        verbose_name_plural = "categories"
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "category_type"],
@@ -50,6 +53,9 @@ class Category(models.Model):
 class Expense(models.Model):
     """Expense record with amount, date, note and category ID."""
 
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="expenses"
+    )
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="expenses"
     )
@@ -67,6 +73,9 @@ class Expense(models.Model):
 class Income(models.Model):
     """Income record with amount, date, note and category ID."""
 
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="income"
+    )
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="incomes"
     )
@@ -85,6 +94,9 @@ class Budget(models.Model):
     """Budget for a category with start/end dates, amount and
     progress."""
 
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="budgets"
+    )
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="budgets"
     )
@@ -117,6 +129,7 @@ class Budget(models.Model):
 
     class Meta:
         """Meta class for the Budget model."""
+
         constraints = [
             models.UniqueConstraint(
                 fields=["category", "start_date", "end_date"],
@@ -127,8 +140,9 @@ class Budget(models.Model):
     def compute_remaining_and_percentage(self):
         """Compute remaining amount and percentage spent."""
         total_spent = Expense.objects.filter(
+            user=self.user,
             category=self.category,
-            date__range=(self.start_date, self.end_date)
+            date__range=(self.start_date, self.end_date),
         ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
         remaining = self.amount - total_spent
         percentage = (
@@ -151,6 +165,9 @@ class Budget(models.Model):
 class Goal(models.Model):
     """Financial goal with target, deadline and status."""
 
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="goals"
+    )
     name = models.CharField(max_length=150)
     target = models.DecimalField(max_digits=10, decimal_places=2)
     deadline = models.DateField()
@@ -159,3 +176,16 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.name} - ${self.target} ({self.status})"
+
+
+# ----------------------User Profile----------------------
+
+
+class UserProfile(models.Model):
+    """User profile with name and date of birth."""
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="profile"
+    )
+    name = models.CharField(max_length=150)
+    date_of_birth = models.DateField(null=True, blank=True)

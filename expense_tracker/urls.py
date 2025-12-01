@@ -29,6 +29,7 @@ from et_transactions.views import (
     BudgetViewSet,
     GoalViewSet,
     DashboardAPIView,
+    CategoryViewSet,
 )
 
 
@@ -37,7 +38,7 @@ router.register(r"expenses", ExpenseViewSet)
 router.register(r"income", IncomeViewSet)
 router.register(r"budgets", BudgetViewSet)
 router.register(r"goals", GoalViewSet)
-
+router.register(r"categories", CategoryViewSet)
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),

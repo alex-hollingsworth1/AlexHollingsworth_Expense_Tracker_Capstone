@@ -2,17 +2,11 @@
 
 # pylint: disable=no-member
 
-# from django.contrib import messages
 from django.db.models import Sum
-
-# from django.urls import reverse, reverse_lazy
-# from django.views.generic import ListView, TemplateView
-# from django.views.generic.detail import DetailView
-# from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .serializers import (
     ExpenseSerializer,
     CategorySerializer,
@@ -20,13 +14,6 @@ from .serializers import (
     BudgetSerializer,
     GoalSerializer,
 )
-
-# from .forms import (
-#     CreateExpenseForm,
-#     CreateIncomeForm,
-#     CreateBudgetForm,
-#     CreateGoalForm,
-# )
 from .models import Budget, Category, Expense, Goal, Income
 
 
@@ -38,8 +25,15 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     API endpoint that allows expenses to be viewed or edited.
     """
 
-    queryset = Expense.objects.all().order_by("-date")
+    queryset = Expense.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = ExpenseSerializer
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user).order_by("-date")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class IncomeViewSet(viewsets.ModelViewSet):
@@ -47,8 +41,15 @@ class IncomeViewSet(viewsets.ModelViewSet):
     API endpoint that allows income to be viewed or edited.
     """
 
-    queryset = Income.objects.all().order_by("-date")
+    queryset = Income.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = IncomeSerializer
+
+    def get_queryset(self):
+        return Income.objects.filter(user=self.request.user).order_by("-date")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class BudgetViewSet(viewsets.ModelViewSet):
@@ -56,8 +57,17 @@ class BudgetViewSet(viewsets.ModelViewSet):
     API endpoint that allows budgets to be viewed or edited.
     """
 
-    queryset = Budget.objects.all().order_by("-start_date")
+    queryset = Budget.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = BudgetSerializer
+
+    def get_queryset(self):
+        return Budget.objects.filter(user=self.request.user).order_by(
+            "-start_date"
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class GoalViewSet(viewsets.ModelViewSet):
@@ -65,8 +75,23 @@ class GoalViewSet(viewsets.ModelViewSet):
     API endpoint that allows goals to be viewed or edited.
     """
 
-    queryset = Goal.objects.all().order_by("deadline")
+    queryset = Goal.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = GoalSerializer
+
+    def get_queryset(self):
+        return Goal.objects.filter(user=self.request.user).order_by("deadline")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """API endpoint that allows categories to be viewed or edited."""
+
+    queryset = Category.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = CategorySerializer
 
 
 class DashboardAPIView(APIView):
@@ -75,24 +100,36 @@ class DashboardAPIView(APIView):
     Combines expenses, income, budgets, and goals with totals.
     """
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """Get dashboard summary data."""
 
-        # Query-set for recent expenses, income, budgets, and goals
-        recent_expenses = Expense.objects.order_by("-date")[:3]
-        recent_income = Income.objects.order_by("-date")[:3]
-        recent_budgets = Budget.objects.order_by("-start_date")[:3]
-        recent_goals = Goal.objects.order_by("deadline")[:3]
+        user = request.user
+
+        recent_expenses = Expense.objects.filter(user=user).order_by("-date")[
+            :3
+        ]
+        recent_income = Income.objects.filter(user=user).order_by("-date")[:3]
+        recent_budgets = Budget.objects.filter(user=user).order_by(
+            "-start_date"
+        )[:3]
+        recent_goals = Goal.objects.filter(user=user).order_by("deadline")[:3]
         income_total = (
-            Income.objects.aggregate(total=Sum("amount"))["total"] or 0
+            Income.objects.filter(user=user).aggregate(total=Sum("amount"))[
+                "total"
+            ]
+            or 0
         )
         expense_total = (
-            Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
+            Expense.objects.filter(user=user).aggregate(total=Sum("amount"))[
+                "total"
+            ]
+            or 0
         )
         net_total = income_total - expense_total
-        number_of_budgets = Budget.objects.count()
-        number_of_goals = Goal.objects.count()
+        number_of_budgets = Budget.objects.filter(user=user).count()
+        number_of_goals = Goal.objects.filter(user=user).count()
 
         # Serialize the data
         recent_expenses_serializer = ExpenseSerializer(

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchDashboardData } from '../services/api'
 import '../Dashboard.css'
 
@@ -7,14 +8,14 @@ function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData()
-    .then(setDashboardData)
-    .catch(console.error)
+      .then(setDashboardData)
+      .catch(console.error)
   }, [])
 
   return (
     <div>
       <h1>Dashboard</h1>
-      
+
       {/* Summary Section */}
       <div className="dashboard-summary">
         <div className="summary-pill">
@@ -25,11 +26,11 @@ function Dashboard() {
           Total Expenses<br />
           <strong>${dashboardData?.expense_total?.toFixed(2) || '0.00'}</strong>
         </div>
-        <div className={`summary-pill ${(dashboardData?.net_total || 0) >= 0 ? 'net-positive' : 'net-negative'}`}>
+        <div className="summary-pill">
           Budgets<br />
           <strong>{dashboardData?.number_of_budgets || 0}</strong>
         </div>
-        <div className={`summary-pill ${(dashboardData?.net_total || 0) >= 0 ? 'net-positive' : 'net-negative'}`}>
+        <div className="summary-pill">
           Goals<br />
           <strong>{dashboardData?.number_of_goals || 0}</strong>
         </div>
@@ -43,13 +44,15 @@ function Dashboard() {
             {dashboardData?.recent_expenses?.length > 0 ? (
               dashboardData.recent_expenses.map((expense) => (
                 <li key={expense.id}>
-                  <article>
-                    <h3>{expense.category.name}</h3>
-                    <p className="meta">
-                      <strong>Date:</strong> {expense.date} · <strong>Amount:</strong> ${expense.amount}
-                    </p>
-                    <p>{expense.note || 'No note provided.'}</p>
-                  </article>
+                  <Link to={`/expenses/${expense.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <article>
+                      <h3>{expense.category.name}</h3>
+                      <p className="meta">
+                        <strong>Date:</strong> {expense.date} · <strong>Amount:</strong> ${expense.amount}
+                      </p>
+                      <p>{expense.note || 'No note provided.'}</p>
+                    </article>
+                  </Link>
                 </li>
               ))
             ) : (
@@ -64,13 +67,15 @@ function Dashboard() {
             {dashboardData?.recent_income?.length > 0 ? (
               dashboardData.recent_income.map((income) => (
                 <li key={income.id}>
-                  <article>
-                    <h3>{income.category.name}</h3>
-                    <p className="meta">
-                      <strong>Date:</strong> {income.date} · <strong>Amount:</strong> ${income.amount}
-                    </p>
-                    <p>{income.note || 'No note provided.'}</p>
-                  </article>
+                  <Link to={`/income/${income.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <article>
+                      <h3>{income.category.name}</h3>
+                      <p className="meta">
+                        <strong>Date:</strong> {income.date} · <strong>Amount:</strong> ${income.amount}
+                      </p>
+                      <p>{income.note || 'No note provided.'}</p>
+                    </article>
+                  </Link>
                 </li>
               ))
             ) : (
@@ -85,12 +90,14 @@ function Dashboard() {
             {dashboardData?.recent_budgets?.length > 0 ? (
               dashboardData.recent_budgets.map((budget) => (
                 <li key={budget.id}>
-                  <article>
-                    <h3>{budget.category.name}</h3>
-                    <p className="meta">
-                      <strong>Amount:</strong> ${budget.amount} · <strong>Period:</strong> {budget.start_date} to {budget.end_date}
-                    </p>
-                  </article>
+                  <Link to={`/budgets/${budget.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <article>
+                      <h3>{budget.category.name}</h3>
+                      <p className="meta">
+                        <strong>Amount:</strong> ${budget.amount} · <strong>Period:</strong> {budget.start_date} to {budget.end_date}
+                      </p>
+                    </article>
+                  </Link>
                 </li>
               ))
             ) : (
@@ -105,13 +112,16 @@ function Dashboard() {
             {dashboardData?.recent_goals?.length > 0 ? (
               dashboardData.recent_goals.map((goal) => (
                 <li key={goal.id}>
-                  <article>
-                    <h3>{goal.name}</h3>
-                    <p className="meta">
-                      <strong>Target:</strong> ${goal.target} · <strong>Deadline:</strong> {goal.deadline} · 
-                    </p>
-                    <p><strong>Status:</strong> {goal.status}</p>
-                  </article>
+                  <Link to={`/goals/${goal.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <article>
+                      <h3>{goal.name}</h3>
+                      <p className="meta">
+                        <strong>Target:</strong> ${goal.target} · <strong>Deadline:</strong> {goal.deadline} ·
+                      </p>
+                      <p><strong>Status:</strong> {goal.status}</p>
+                    </article>
+                  </Link>
+
                 </li>
               ))
             ) : (
