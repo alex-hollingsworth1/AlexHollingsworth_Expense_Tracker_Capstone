@@ -216,6 +216,13 @@ async function createGoal(goalData) {
   return createdGoal;
 }
 
+async function deleteExpense(id) {
+  await apiRequest(`/expenses/${id}/`, {
+    method: 'DELETE'
+  });
+  // DELETE requests typically return 204 No Content, so no data to return
+}
+
 // Export all API functions
 export {
   apiRequest,
@@ -236,5 +243,6 @@ export {
   createIncome,
   updateExpense,
   createBudget,
-  createGoal
+  createGoal,
+  deleteExpense
 }

@@ -33,6 +33,9 @@ const ExpenseDetail = () => {
             <div className="summary-pill" onClick={() => navigate(`/edit-expense/${id}`)}>
                 Edit
             </div>
+            <div className="summary-pill" onClick={() => navigate(`/delete-expense/${id}`)}>
+                Delete
+            </div>
         </section>
     )
 }

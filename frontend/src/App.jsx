@@ -18,6 +18,7 @@ import CreateIncome from './pages/CreateIncome'
 import EditExpense from './pages/EditExpense'
 import CreateBudget from './pages/CreateBudget'
 import CreateGoal from './pages/CreateGoal'
+import DeleteExpense from './pages/DeleteExpense'
 
 function App() {
   return (
@@ -38,9 +39,7 @@ function App() {
         <Route path="/income/:id" element={<ProtectedRoute><IncomeDetail /></ProtectedRoute>} />
         <Route path="/goals/:id" element={<ProtectedRoute><GoalDetail /></ProtectedRoute>} />
         <Route path="/edit-expense/:id" element={<ProtectedRoute><EditExpense /></ProtectedRoute>} />
-        
-        
-        
+        <Route path="/delete-expense/:id" element={<ProtectedRoute><DeleteExpense /></ProtectedRoute>} />
       </Routes>
     </Layout>
   )
