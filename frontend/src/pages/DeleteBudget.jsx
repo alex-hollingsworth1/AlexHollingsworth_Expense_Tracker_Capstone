@@ -1,61 +1,61 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchExpense, deleteExpense } from "../services/api";
+import { deleteBudget, fetchBudget } from "../services/api";
 import '../Transactions.css'
 
-function DeleteExpense() {
+function DeleteBudget() {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const [expense, setExpense] = useState(null)
+    const [budget, setBudget] = useState(null)
     const [loading, setLoading] = useState(true)
     const [deleting, setDeleting] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [successMessage, setSuccessMessage] = useState(null)
 
-    // Fetch the expense data
+    // Fetch the budget data
     useEffect(() => {
-        fetchExpense(id)
-            .then((expense) => {
-                setExpense(expense)
+        fetchBudget(id)
+            .then((budget) => {
+                setBudget(budget)
                 setLoading(false)
             })
             .catch((error) => {
-                console.error("Failed to fetch expense: ", error)
-                setErrorMessage("Failed to load expense")
+                console.error("Failed to fetch budget details: ", error)
+                setErrorMessage("Failed to fetch budget details")
                 setLoading(false)
             })
     }, [id])
 
-    const handleDelete = async (e) => {
+    const handleBudget = async (e) => {
         e.preventDefault()
         setErrorMessage(null)
         setDeleting(true)
 
         try {
-            await deleteExpense(id)
-            setSuccessMessage("Expense deleted successfully!")
+            await deleteBudget(id)
+            setSuccessMessage("Budget deleted successfully!")
             setTimeout(() => {
-                navigate("/expenses")
+                navigate("/budgets")
             }, 750)
         } catch (error) {
-            setErrorMessage("Failed to delete expense. Please try again.")
+            setErrorMessage("Failed to delete budget. Please try again.")
             console.error(error)
             setDeleting(false)
         }
     }
 
     const handleCancel = () => {
-        navigate(`/expenses/${id}`)
+        navigate(`/budgets/${id}`)
     }
 
     if (loading) {
-        return <p>Loading expense...</p>
+        return <p>Loading budget...</p>
     }
 
     return (
         <section className="section-detail">
-            <h1>Delete Expense</h1>
+            <h1>Delete Budget</h1>
 
             {/* Confirmation Warning Message */}
             <div className="error-message" style={{
@@ -64,7 +64,7 @@ function DeleteExpense() {
                 color: '#856404',
                 marginBottom: '20px'
             }}>
-                <strong>Warning:</strong> Are you sure you want to delete this expense? This action cannot be undone.
+                <strong>Warning:</strong> Are you sure you want to delete this budget? This action cannot be undone.
             </div>
 
             {successMessage && (
@@ -78,17 +78,17 @@ function DeleteExpense() {
                 </div>
             )}
 
-            {/* Display expense details (read-only) */}
-            {expense ? (
+            {/* Display budget details (read-only) */}
+            {budget ? (
                 <article>
-                    <h2>{expense.category.name}</h2>
+                    <h2>{budget.category.name}</h2>
                     <p className="meta">
-                        <strong>Amount:</strong> ${expense.amount} · <strong>Date:</strong> {expense.date}
+                        <strong>Amount:</strong> ${budget.amount} · <strong>Start Date:</strong> {budget.start_date} · <strong>End Date:</strong> {budget.end_date}
                     </p>
-                    <p>{expense.note || 'No note provided.'}</p>
+                    <p>{budget.note || 'No note provided.'}</p>
                 </article>
             ) : (
-                <p>No expense found.</p>
+                <p>No budget found.</p>
             )}
 
             {/* Action buttons */}
@@ -97,7 +97,7 @@ function DeleteExpense() {
                     Cancel
                 </div>
 
-                <div className="summary-pill summary-pill-small-delete" onClick={handleDelete} disabled={deleting}>
+                <div className="summary-pill summary-pill-small-delete" onClick={handleBudget} disabled={deleting}>
                     {deleting ? 'Deleting...' : 'Confirm Delete'}
                 </div>
             </div>
@@ -105,4 +105,4 @@ function DeleteExpense() {
     )
 }
 
-export default DeleteExpense;
+export default DeleteBudget;

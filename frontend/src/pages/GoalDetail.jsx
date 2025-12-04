@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { fetchGoal } from '../services/api'
 import '../Transactions.css'
 
@@ -8,11 +8,12 @@ import '../Transactions.css'
 const GoalDetail = () => {
     const { id } = useParams()
     const [goal, setGoal] = useState(null)
-    
+    const navigate = useNavigate()
+
     useEffect(() => {
-    fetchGoal(id)
-    .then(setGoal)
-    .catch(console.error)
+        fetchGoal(id)
+            .then(setGoal)
+            .catch(console.error)
     }, [id])
 
     return (
@@ -29,6 +30,14 @@ const GoalDetail = () => {
             ) : (
                 <p>No goal found.</p>
             )}
+            <div className="action-buttons-container">
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/edit-goal/${id}`)}>
+                    Edit
+                </div>
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/delete-goal/${id}`)}>
+                    Delete
+                </div>
+            </div>
         </section>
     )
 }

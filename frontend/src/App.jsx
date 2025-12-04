@@ -15,10 +15,16 @@ import CreateExpense from './pages/CreateExpense'
 import './App.css'
 import RedirectIfAuthenticated from './components/RedirectIfAuthenticated'
 import CreateIncome from './pages/CreateIncome'
-import EditExpense from './pages/EditExpense'
 import CreateBudget from './pages/CreateBudget'
 import CreateGoal from './pages/CreateGoal'
 import DeleteExpense from './pages/DeleteExpense'
+import DeleteIncome from './pages/DeleteIncome'
+import DeleteBudget from './pages/DeleteBudget'
+import DeleteGoal from './pages/DeleteGoal'
+import EditExpense from './pages/EditExpense'
+import EditIncome from './pages/EditIncome'
+import EditBudget from './pages/EditBudget'
+import EditGoal from './pages/EditGoal'
 
 function App() {
   return (
@@ -40,6 +46,12 @@ function App() {
         <Route path="/goals/:id" element={<ProtectedRoute><GoalDetail /></ProtectedRoute>} />
         <Route path="/edit-expense/:id" element={<ProtectedRoute><EditExpense /></ProtectedRoute>} />
         <Route path="/delete-expense/:id" element={<ProtectedRoute><DeleteExpense /></ProtectedRoute>} />
+        <Route path="/edit-income/:id" element={<ProtectedRoute><EditIncome /></ProtectedRoute>} />
+        <Route path="/delete-income/:id" element={<ProtectedRoute><DeleteIncome /></ProtectedRoute>} />
+        <Route path="/edit-budget/:id" element={<ProtectedRoute><EditBudget /></ProtectedRoute>} />
+        <Route path="/delete-budget/:id" element={<ProtectedRoute><DeleteBudget /></ProtectedRoute>} />
+        <Route path="/edit-goal/:id" element={<ProtectedRoute><EditGoal /></ProtectedRoute>} />
+        <Route path="/delete-goal/:id" element={<ProtectedRoute><DeleteGoal /></ProtectedRoute>} />
       </Routes>
     </Layout>
   )

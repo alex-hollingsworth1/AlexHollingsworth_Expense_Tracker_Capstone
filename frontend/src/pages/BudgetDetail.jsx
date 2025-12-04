@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { fetchBudget } from '../services/api'
 import '../Transactions.css'
 
@@ -8,11 +8,12 @@ import '../Transactions.css'
 const BudgetDetail = () => {
     const { id } = useParams()
     const [budget, setBudget] = useState(null)
-    
+    const navigate = useNavigate()
+
     useEffect(() => {
-    fetchBudget(id)
-    .then(setBudget)
-    .catch(console.error)
+        fetchBudget(id)
+            .then(setBudget)
+            .catch(console.error)
     }, [id])
 
     return (
@@ -29,6 +30,14 @@ const BudgetDetail = () => {
             ) : (
                 <p>No budget found.</p>
             )}
+            <div className="action-buttons-container">
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/edit-budget/${id}`)}>
+                    Edit
+                </div>
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/delete-budget/${id}`)}>
+                    Delete
+                </div>
+            </div>
         </section>
     )
 }

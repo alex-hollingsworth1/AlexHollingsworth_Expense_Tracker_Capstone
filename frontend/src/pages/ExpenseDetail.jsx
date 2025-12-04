@@ -30,11 +30,13 @@ const ExpenseDetail = () => {
             ) : (
                 <p>No expense found.</p>
             )}
-            <div className="summary-pill" onClick={() => navigate(`/edit-expense/${id}`)}>
-                Edit
-            </div>
-            <div className="summary-pill" onClick={() => navigate(`/delete-expense/${id}`)}>
-                Delete
+            <div className="action-buttons-container">
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/edit-expense/${id}`)}>
+                    Edit
+                </div>
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/delete-expense/${id}`)}>
+                    Delete
+                </div>
             </div>
         </section>
     )

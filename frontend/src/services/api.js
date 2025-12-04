@@ -47,6 +47,11 @@ async function apiRequest(endpoint, options = {}) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`)
     }
 
+    // Handle empty responses (e.g., 204 No Content for DELETE requests)
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
+      return null
+    }
+
     // Parse and return JSON response
     const data = await response.json()
     return data
@@ -200,6 +205,30 @@ async function updateExpense(id, expenseData) {
   return updatedExpense;
 }
 
+async function updateIncome(id, incomeData) {
+  const updatedIncome = await apiRequest(`/income/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(incomeData)
+  });
+  return updatedIncome;
+}
+
+async function updateBudget(id, budgetData) {
+  const updatedBudget = await apiRequest(`/budgets/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(budgetData)
+  });
+  return updatedBudget;
+}
+
+async function updateGoal(id, goalData) {
+  const updatedGoal = await apiRequest(`/goals/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(goalData)
+  });
+  return updatedGoal;
+}
+
 async function createBudget(budgetData) {
   const createdBudget = await apiRequest("/budgets/", {
     method: 'POST',
@@ -223,6 +252,24 @@ async function deleteExpense(id) {
   // DELETE requests typically return 204 No Content, so no data to return
 }
 
+async function deleteIncome(id) {
+  await apiRequest(`/income/${id}/`, {
+    method: 'DELETE'
+  });
+}
+
+async function deleteBudget(id) {
+  await apiRequest(`/budgets/${id}/`, {
+    method: 'DELETE'
+  });
+}
+
+async function deleteGoal(id) {
+  await apiRequest(`/goals/${id}/`, {
+    method: 'DELETE'
+  });
+}
+
 // Export all API functions
 export {
   apiRequest,
@@ -242,7 +289,13 @@ export {
   createExpense,
   createIncome,
   updateExpense,
+  updateIncome,
+  updateBudget,
+  updateGoal,
   createBudget,
   createGoal,
-  deleteExpense
+  deleteExpense,
+  deleteIncome,
+  deleteBudget,
+  deleteGoal
 }

@@ -221,6 +221,27 @@ section.section-listing .meta {
   animation: fadeIn 0.3s ease-in;
 }
 
+/* Field Error Message Styles */
+.field-error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+}
+
+.create-form input.error,
+.create-form select.error {
+  border-color: #dc3545;
+  border-width: 2px;
+}
+
+.create-form input.error:focus,
+.create-form select.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
 /* Loading Spinner Styles */
 .spinner {
   border: 3px solid #f3f3f3;

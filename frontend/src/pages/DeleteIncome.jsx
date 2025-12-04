@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchExpense, deleteExpense } from "../services/api";
+import { deleteIncome , fetchIncome } from "../services/api";
 import '../Transactions.css'
 
-function DeleteExpense() {
+function DeleteIncome() {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const [expense, setExpense] = useState(null)
+    const [income, setIncome] = useState(null)
     const [loading, setLoading] = useState(true)
     const [deleting, setDeleting] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [successMessage, setSuccessMessage] = useState(null)
 
-    // Fetch the expense data
+    // Fetch the income data
     useEffect(() => {
-        fetchExpense(id)
-            .then((expense) => {
-                setExpense(expense)
+        fetchIncome(id)
+            .then((income) => {
+                setIncome(income)
                 setLoading(false)
             })
             .catch((error) => {
-                console.error("Failed to fetch expense: ", error)
-                setErrorMessage("Failed to load expense")
+                console.error("Failed to fetch income: ", error)
+                setErrorMessage("Failed to load income")
                 setLoading(false)
             })
     }, [id])
@@ -33,29 +33,29 @@ function DeleteExpense() {
         setDeleting(true)
 
         try {
-            await deleteExpense(id)
-            setSuccessMessage("Expense deleted successfully!")
+            await deleteIncome(id)
+            setSuccessMessage("Income transaction deleted successfully!")
             setTimeout(() => {
-                navigate("/expenses")
+                navigate("/income")
             }, 750)
         } catch (error) {
-            setErrorMessage("Failed to delete expense. Please try again.")
+            setErrorMessage("Failed to delete income transaction. Please try again.")
             console.error(error)
             setDeleting(false)
         }
     }
 
     const handleCancel = () => {
-        navigate(`/expenses/${id}`)
+        navigate(`/income/${id}`)
     }
 
     if (loading) {
-        return <p>Loading expense...</p>
+        return <p>Loading income...</p>
     }
 
     return (
         <section className="section-detail">
-            <h1>Delete Expense</h1>
+            <h1>Delete Income Transaction</h1>
 
             {/* Confirmation Warning Message */}
             <div className="error-message" style={{
@@ -64,7 +64,7 @@ function DeleteExpense() {
                 color: '#856404',
                 marginBottom: '20px'
             }}>
-                <strong>Warning:</strong> Are you sure you want to delete this expense? This action cannot be undone.
+                <strong>Warning:</strong> Are you sure you want to delete this income transaction? This action cannot be undone.
             </div>
 
             {successMessage && (
@@ -78,17 +78,17 @@ function DeleteExpense() {
                 </div>
             )}
 
-            {/* Display expense details (read-only) */}
-            {expense ? (
+            {/* Display income details (read-only) */}
+            {income ? (
                 <article>
-                    <h2>{expense.category.name}</h2>
+                    <h2>{income.category.name}</h2>
                     <p className="meta">
-                        <strong>Amount:</strong> ${expense.amount} · <strong>Date:</strong> {expense.date}
+                        <strong>Amount:</strong> ${income.amount} · <strong>Date:</strong> {income.date}
                     </p>
-                    <p>{expense.note || 'No note provided.'}</p>
+                    <p>{income.note || 'No note provided.'}</p>
                 </article>
             ) : (
-                <p>No expense found.</p>
+                <p>No income found.</p>
             )}
 
             {/* Action buttons */}
@@ -105,4 +105,4 @@ function DeleteExpense() {
     )
 }
 
-export default DeleteExpense;
+export default DeleteIncome;

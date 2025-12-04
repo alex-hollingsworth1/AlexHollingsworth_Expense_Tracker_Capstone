@@ -100,6 +100,47 @@ section.section-listing .meta {
   font-size: 0.95rem;
 }
 
+.summary-pill {
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  background: rgba(25, 135, 84, 0.12);
+  color: #0f5132;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(15, 81, 50, 0.1);
+  font-family: 'Montserrat', sans-serif;
+}
 
+.action-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.summary-pill-small {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+}
+
+.summary-pill-small-delete {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summary-pill-small-delete:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 81, 50, 0.15);
+}
+
+.summary-pill-small:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 81, 50, 0.15);
+}
 
 

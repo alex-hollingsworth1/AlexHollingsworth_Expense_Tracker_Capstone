@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { fetchIncome } from '../services/api'
 import '../Transactions.css'
 
@@ -8,11 +8,12 @@ import '../Transactions.css'
 const IncomeDetail = () => {
     const { id } = useParams()
     const [income, setIncome] = useState(null)
-    
+    const navigate = useNavigate()
+
     useEffect(() => {
-    fetchIncome(id)
-    .then(setIncome)
-    .catch(console.error)
+        fetchIncome(id)
+            .then(setIncome)
+            .catch(console.error)
     }, [id])
 
     return (
@@ -29,6 +30,14 @@ const IncomeDetail = () => {
             ) : (
                 <p>No income found.</p>
             )}
+            <div className="action-buttons-container">
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/edit-income/${id}`)}>
+                    Edit
+                </div>
+                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/delete-income/${id}`)}>
+                    Delete
+                </div>
+            </div>
         </section>
     )
 }
