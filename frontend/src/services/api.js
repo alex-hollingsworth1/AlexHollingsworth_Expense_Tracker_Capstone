@@ -26,7 +26,7 @@ async function apiRequest(endpoint, options = {}) {
     'Content-Type': 'application/json',
   }
 
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token'); 
 
   if (token) {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
@@ -156,7 +156,7 @@ async function refreshAccessToken() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+  const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -273,16 +273,16 @@ async function deleteGoal(id) {
 // Export all API functions
 export {
   apiRequest,
-  API_BASE_URL,
-  fetchDashboardData,
-  fetchExpenses,
-  fetchIncomes,
-  fetchBudgets,
-  fetchGoals,
-  fetchExpense,
-  fetchBudget,
-  fetchIncome,
-  fetchGoal,
+  API_BASE_URL, 
+  fetchDashboardData, 
+  fetchExpenses, 
+  fetchIncomes, 
+  fetchBudgets, 
+  fetchGoals, 
+  fetchExpense, 
+  fetchBudget, 
+  fetchIncome, 
+  fetchGoal, 
   loginUser,
   refreshAccessToken,
   fetchCategories,
