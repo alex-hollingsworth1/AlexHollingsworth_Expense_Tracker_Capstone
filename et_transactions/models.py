@@ -37,6 +37,7 @@ class Category(models.Model):
 
     class Meta:
         """Meta class for the Category model."""
+
         verbose_name = "category"
         verbose_name_plural = "categories"
         constraints = [

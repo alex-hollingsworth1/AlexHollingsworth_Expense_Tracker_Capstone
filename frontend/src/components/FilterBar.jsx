@@ -25,6 +25,7 @@ function FilterBar({ filters, onFilterChange, categories }) {
         })
     }
 
+    // Handler for min amount
     const handleMinAmount = (e) => {
         onFilterChange({
             ...filters,
@@ -32,6 +33,7 @@ function FilterBar({ filters, onFilterChange, categories }) {
         })
     }
 
+    // Handler for max amount
     const handleMaxAmount = (e) => {
         onFilterChange({
             ...filters,
@@ -39,6 +41,7 @@ function FilterBar({ filters, onFilterChange, categories }) {
         })
     }
 
+    // Handler for search notes
     const handleSearchNotes = (e) => {
         onFilterChange({
             ...filters,
@@ -46,27 +49,27 @@ function FilterBar({ filters, onFilterChange, categories }) {
         })
     }
 
+    // Handler for sort by
     const handleSortByChange = (e) => {
         const value = e.target.value
-        
-        // Parse the value to set both sortBy and sortOrder
+
         if (value === 'date') {
             onFilterChange({
                 ...filters,
                 sortBy: 'date',
-                sortOrder: 'desc'  // Default: newest first
+                sortOrder: 'desc'
             })
         } else if (value === 'amount-desc') {
             onFilterChange({
                 ...filters,
                 sortBy: 'amount',
-                sortOrder: 'desc'  // High to Low
+                sortOrder: 'desc'
             })
         } else if (value === 'amount-asc') {
             onFilterChange({
                 ...filters,
                 sortBy: 'amount',
-                sortOrder: 'asc'  // Low to High
+                sortOrder: 'asc'
             })
         }
     }
@@ -84,7 +87,7 @@ function FilterBar({ filters, onFilterChange, categories }) {
                 >
                     <option value="">All Categories</option>
                     {categories && categories
-                        .filter(cat => cat.category_type === 'EXPENSE')
+                        .filter(cat => cat.category_type === 'EXPENSE' || cat.category_type === 'INCOME')
                         .map(category => (
                             <option key={category.id} value={category.id}>
                                 {category.name}

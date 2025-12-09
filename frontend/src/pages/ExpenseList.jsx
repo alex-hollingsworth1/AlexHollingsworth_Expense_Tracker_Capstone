@@ -6,7 +6,7 @@ import '../Transactions.css'
 
 function ExpenseList() {
 
-  const [expenses, setExpenses] = useState([])
+  // const [expenses, setExpenses] = useState([])
   const [categories, setCategories] = useState([])
 
   // Filter state
