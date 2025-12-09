@@ -11,14 +11,14 @@ function ExpenseList() {
 
   // Filter state
   const [filters, setFilters] = useState({
-    category: '',        // or 'all' for "All Categories"
+    category: '',
     dateFrom: '',
     dateTo: '',
     amountMin: '',
     amountMax: '',
-    searchText: '',      // for note/name search
-    sortBy: 'date',      // default sort
-    sortOrder: 'desc'    // 'asc' or 'desc'
+    searchText: '',
+    sortBy: 'date',
+    sortOrder: 'desc'
   })
 
   // Original data (from API)
@@ -29,32 +29,97 @@ function ExpenseList() {
 
   useEffect(() => {
     fetchExpenses()
-      .then(setExpenses)
+      .then(setAllExpenses)
       .catch(console.error)
-    
+
     fetchCategories()
       .then(setCategories)
       .catch(console.error)
   }, [])
+
+  useEffect(() => {
+    applyFilters()
+  }, [allExpenses, filters])
 
   // Handler that updates filters state
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters)
   }
 
+  const applyFilters = () => {
+    let filtered = [...allExpenses]
+
+    if (filters.category && filters.category !== 'all') {
+      filtered = filtered.filter((expense) => {
+        return expense.category.id === parseInt(filters.category)
+      })
+    }
+
+    if (filters.dateFrom) {
+      filtered = filtered.filter((expense) => {
+        return expense.date >= filters.dateFrom
+      })
+    }
+
+    if (filters.dateTo) {
+      filtered = filtered.filter((expense) => {
+        return expense.date <= filters.dateTo
+      })
+    }
+
+    if (filters.amountMin) {
+      filtered = filtered.filter((expense) => {
+        return parseFloat(expense.amount) >= parseFloat(filters.amountMin)
+      })
+    }
+
+    if (filters.amountMax) {
+      filtered = filtered.filter((expense) => {
+        return parseFloat(expense.amount) <= parseFloat(filters.amountMax)
+      })
+    }
+
+    if (filters.searchText) {
+      filtered = filtered.filter((expense) => {
+        return expense.note?.toLowerCase().includes(filters.searchText.toLowerCase())
+      })
+    }
+
+    if (filters.sortBy == 'date') {
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.date)
+        const dateB = new Date(b.date)
+        const comparison = dateA - dateB
+        return filters.sortOrder === 'desc' ? -comparison : comparison
+      })
+    }
+
+    if (filters.sortBy == 'amount') {
+      filtered.sort((a, b) => {
+        const amountA = parseFloat(a.amount)
+        const amountB = parseFloat(b.amount)
+        const comparison = amountA - amountB
+        return filters.sortOrder === 'desc' ? -comparison : comparison
+      })
+    }
+
+    setFilteredExpenses(filtered)
+  }
+
+
   return (
     <section className="section-listing">
       <h1>Expenses</h1>
-      
-      <FilterBar 
+
+      <FilterBar
         filters={filters}
         onFilterChange={handleFilterChange}
         categories={categories}
       />
-      
-      {expenses.length > 0 ? (
+
+      {filteredExpenses.length > 0 ? (
         <ul>
-          {expenses.map((expense) => (
+          {filteredExpenses.map((expense) => (
             <li key={expense.id}>
               <Link to={`/expenses/${expense.id}`}>
                 <article>
@@ -75,5 +140,5 @@ function ExpenseList() {
   )
 }
 
-export default ExpenseList
+export default ExpenseList;
 

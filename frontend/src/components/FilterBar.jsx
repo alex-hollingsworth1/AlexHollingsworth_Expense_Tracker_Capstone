@@ -9,6 +9,68 @@ function FilterBar({ filters, onFilterChange, categories }) {
         })
     }
 
+    // Handler for dateFrom
+    const handleDateFromChange = (e) => {
+        onFilterChange({
+            ...filters,
+            dateFrom: e.target.value
+        })
+    }
+
+    // Handler for dateTo
+    const handleDateToChange = (e) => {
+        onFilterChange({
+            ...filters,
+            dateTo: e.target.value
+        })
+    }
+
+    const handleMinAmount = (e) => {
+        onFilterChange({
+            ...filters,
+            amountMin: e.target.value
+        })
+    }
+
+    const handleMaxAmount = (e) => {
+        onFilterChange({
+            ...filters,
+            amountMax: e.target.value
+        })
+    }
+
+    const handleSearchNotes = (e) => {
+        onFilterChange({
+            ...filters,
+            searchText: e.target.value
+        })
+    }
+
+    const handleSortByChange = (e) => {
+        const value = e.target.value
+        
+        // Parse the value to set both sortBy and sortOrder
+        if (value === 'date') {
+            onFilterChange({
+                ...filters,
+                sortBy: 'date',
+                sortOrder: 'desc'  // Default: newest first
+            })
+        } else if (value === 'amount-desc') {
+            onFilterChange({
+                ...filters,
+                sortBy: 'amount',
+                sortOrder: 'desc'  // High to Low
+            })
+        } else if (value === 'amount-asc') {
+            onFilterChange({
+                ...filters,
+                sortBy: 'amount',
+                sortOrder: 'asc'  // Low to High
+            })
+        }
+    }
+
     return (
         <div className="filter-bar">
 
@@ -22,7 +84,7 @@ function FilterBar({ filters, onFilterChange, categories }) {
                 >
                     <option value="">All Categories</option>
                     {categories && categories
-                        .filter(cat => cat.category_type === 'expense')
+                        .filter(cat => cat.category_type === 'EXPENSE')
                         .map(category => (
                             <option key={category.id} value={category.id}>
                                 {category.name}
@@ -35,37 +97,45 @@ function FilterBar({ filters, onFilterChange, categories }) {
             {/* Date From */}
             <div className="filter-slot">
                 <label>From</label>
-                <input type="date" />
+                <input type="date" value={filters.dateFrom} onChange={handleDateFromChange}
+                />
             </div>
 
             {/* Date To */}
             <div className="filter-slot">
                 <label>To</label>
-                <input type="date" />
+                <input type="date" value={filters.dateTo} onChange={handleDateToChange} />
             </div>
 
             {/* Min Amount */}
             <div className="filter-slot">
                 <label>Min Amount</label>
-                <input type="number" />
+                <input type="number" value={filters.amountMin} onChange={handleMinAmount} />
             </div>
 
             {/* Max Amount */}
             <div className="filter-slot">
                 <label>Max Amount</label>
-                <input type="number" />
+                <input type="number" value={filters.amountMax} onChange={handleMaxAmount} />
             </div>
 
             {/* Search */}
             <div className="filter-slot">
                 <label>Search Notes</label>
-                <input type="text" />
+                <input type="text" value={filters.searchText} onChange={handleSearchNotes} />
             </div>
 
-            {/* Sort */}
+            {/* Sort By */}
             <div className="filter-slot">
                 <label>Sort By</label>
-                <select>...</select>
+                <select
+                    value={filters.sortBy === 'date' ? 'date' : filters.sortBy === 'amount' ? `amount-${filters.sortOrder}` : 'date'}
+                    onChange={handleSortByChange}
+                >
+                    <option value="date">Date</option>
+                    <option value="amount-desc">Amount (High to Low)</option>
+                    <option value="amount-asc">Amount (Low to High)</option>
+                </select>
             </div>
         </div>
     )

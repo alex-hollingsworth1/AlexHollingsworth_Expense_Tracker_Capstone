@@ -143,4 +143,28 @@ section.section-listing .meta {
   box-shadow: 0 8px 16px rgba(15, 81, 50, 0.15);
 }
 
+.filter-bar {
+  display: flex;
+  gap: 1rem;              /* Space between filter items */
+  justify-content: center;
+  margin-bottom: 1.5rem;  /* Space below the filter bar */
+}
 
+.filter-slot {
+  display: flex;
+  flex-direction: column;  /* Stack label above input */
+  min-width: 150px;        /* Minimum width for each filter */
+}
+
+.filter-slot label {
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.filter-slot input,
+.filter-slot select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
