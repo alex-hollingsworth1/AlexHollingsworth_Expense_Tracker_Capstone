@@ -21,7 +21,7 @@ function GoalList() {
   useEffect(() => {
     fetchGoals()
       .then(setAllGoals)
-      .catch(console.error)
+    .catch(console.error)
   }, [])
 
   useEffect(() => {
@@ -126,12 +126,12 @@ function GoalList() {
           {filteredGoals.map((goal) => (
             <li key={goal.id}>
               <Link to={`/goals/${goal.id}`}>
-                <article>
-                  <h2>{goal.name}</h2>
-                  <p className="meta">
-                    <strong>Target:</strong> ${goal.target} · <strong>Deadline:</strong> {goal.deadline} · <strong>Status:</strong> {goal.status}
-                  </p>
-                </article>
+              <article>
+                <h2>{goal.name}</h2>
+                <p className="meta">
+                  <strong>Target:</strong> ${goal.target} · <strong>Deadline:</strong> {goal.deadline} · <strong>Status:</strong> {goal.status}
+                </p>
+              </article>
               </Link>
             </li>
           ))}

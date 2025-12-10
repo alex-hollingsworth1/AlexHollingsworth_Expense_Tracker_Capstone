@@ -70,7 +70,7 @@ function FilterBar({ filters, onFilterChange, categories }) {
                 ...filters,
                 sortBy: 'amount',
                 sortOrder: 'asc'
-            })
+    })
         }
     }
 

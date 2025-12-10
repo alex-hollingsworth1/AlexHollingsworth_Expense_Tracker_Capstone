@@ -32,7 +32,7 @@ function BudgetList() {
 
     fetchCategories()
       .then(setCategories)
-      .catch(console.error)
+    .catch(console.error)
   }, [])
 
   useEffect(() => {
@@ -130,13 +130,13 @@ function BudgetList() {
           {filteredBudgets.map((budget) => (
             <li key={budget.id}>
               <Link to={`/budgets/${budget.id}`}>
-                <article>
-                  <h2>{budget.category.name}</h2>
-                  <p className="meta">
-                    <strong>Amount:</strong> ${budget.amount} · <strong>Period:</strong> {budget.start_date} to {budget.end_date}
-                  </p>
-                  <p>{budget.note || 'No note provided.'}</p>
-                </article>
+              <article>
+                <h2>{budget.category.name}</h2>
+                <p className="meta">
+                  <strong>Amount:</strong> ${budget.amount} · <strong>Period:</strong> {budget.start_date} to {budget.end_date}
+                </p>
+                <p>{budget.note || 'No note provided.'}</p>
+              </article>
               </Link>
             </li>
           ))}

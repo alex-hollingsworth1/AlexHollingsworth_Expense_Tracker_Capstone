@@ -105,38 +105,38 @@ function IncomeList() {
     setFilteredIncome(filtered)
   }
 
-  return (
-    <section className="section-listing">
-      <h1>Income</h1>
+    return (
+      <section className="section-listing">
+        <h1>Income</h1>
 
-      <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        categories={categories}
-      />
+        <FilterBar
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          categories={categories}
+        />
 
-      {filteredIncome.length > 0 ? (
-        <ul>
-          {filteredIncome.map((income) => (
-            <li key={income.id}>
-              <Link to={`/income/${income.id}`}>
-                <article>
-                  <h2>{income.category.name}</h2>
-                  <p className="meta">
-                    <strong>Date:</strong> {income.date} · <strong>Amount:</strong> ${income.amount}
-                  </p>
-                  <p>{income.note || 'No note provided.'}</p>
-                </article>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No income yet.</p>
-      )}
-    </section>
-  )
-}
+        {filteredIncome.length > 0 ? (
+          <ul>
+            {filteredIncome.map((income) => (
+              <li key={income.id}>
+                <Link to={`/income/${income.id}`}>
+                  <article>
+                    <h2>{income.category.name}</h2>
+                    <p className="meta">
+                      <strong>Date:</strong> {income.date} · <strong>Amount:</strong> ${income.amount}
+                    </p>
+                    <p>{income.note || 'No note provided.'}</p>
+                  </article>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No income yet.</p>
+        )}
+      </section>
+    )
+  }
 
-export default IncomeList
+  export default IncomeList
 
