@@ -46,3 +46,4 @@ frontend/.env.production.local
 # Old CLI database (if you want to keep it locally but not commit)
 expenses.db
 
+db.sqlite3
