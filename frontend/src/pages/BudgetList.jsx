@@ -130,7 +130,7 @@ function BudgetList() {
           {filteredBudgets.map((budget) => (
             <li key={budget.id}>
               <Link to={`/budgets/${budget.id}`}>
-              <article>
+              <article className="budget-item">
                 <h2>{budget.category.name}</h2>
                 <p className="meta">
                   <strong>Amount:</strong> ${budget.amount} · <strong>Period:</strong> {budget.start_date} to {budget.end_date}

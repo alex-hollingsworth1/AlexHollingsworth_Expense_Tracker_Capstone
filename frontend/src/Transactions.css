@@ -1,7 +1,7 @@
 /* Transactions list styles - copied from Django transactions.css */
 
 section.section-listing {
-  width: min(90%, 50rem);
+  width: min(95%, 70rem);
   margin: 6rem auto 2rem;
   font-family: 'Montserrat', sans-serif;
 }
@@ -13,10 +13,12 @@ section.section-listing h1 {
 }
 
 section.section-listing h2 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.4rem;
+  margin-top: 0;
   color: #e9f5ee;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
+  line-height: 1.3;
 }
 
 section.section-listing ul {
@@ -24,17 +26,27 @@ section.section-listing ul {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 section.section-listing li article {
   background: #0f5132;
   border: 1px solid #0c3f26;
   border-radius: 8px;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
   color: #e9f5ee;
   font-family: 'Montserrat', sans-serif;
+}
+
+section.section-listing li article p {
+  margin: 0;
+  margin-top: 0.3rem;
+  line-height: 1.4;
 }
 
 section.section-listing li article:hover {
@@ -95,9 +107,11 @@ section.section-listing li article a:hover {
 }
 
 section.section-listing .meta {
-  margin-top: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
   color: #b4f0c8;
   font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .summary-pill {
@@ -168,4 +182,93 @@ section.section-listing .meta {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-family: 'Montserrat', sans-serif;
+}
+
+/* Color-coded item styles for List Pages */
+section.section-listing li article.expense-item {
+  background: #f8d7da;
+  border-color: #f5c2c7;
+  color: #721c24;
+}
+
+section.section-listing li article.expense-item h2 {
+  color: #721c24;
+}
+
+section.section-listing li article.expense-item p {
+  color: #721c24;
+}
+
+section.section-listing li article.expense-item .meta {
+  color: #842029;
+}
+
+section.section-listing li article.expense-item:hover {
+  box-shadow: 0 12px 20px rgba(220, 53, 69, 0.3);
+}
+
+section.section-listing li article.income-item {
+  background: #d1e7dd;
+  border-color: #badbcc;
+  color: #0f5132;
+}
+
+section.section-listing li article.income-item h2 {
+  color: #0f5132;
+}
+
+section.section-listing li article.income-item p {
+  color: #0f5132;
+}
+
+section.section-listing li article.income-item .meta {
+  color: #0a3622;
+}
+
+section.section-listing li article.income-item:hover {
+  box-shadow: 0 12px 20px rgba(25, 135, 84, 0.3);
+}
+
+section.section-listing li article.budget-item {
+  background: #cfe2ff;
+  border-color: #b6d4fe;
+  color: #084298;
+}
+
+section.section-listing li article.budget-item h2 {
+  color: #084298;
+}
+
+section.section-listing li article.budget-item p {
+  color: #084298;
+}
+
+section.section-listing li article.budget-item .meta {
+  color: #052c65;
+}
+
+section.section-listing li article.budget-item:hover {
+  box-shadow: 0 12px 20px rgba(13, 110, 253, 0.3);
+}
+
+section.section-listing li article.goal-item {
+  background: #fff3cd;
+  border-color: #ffecb5;
+  color: #664d03;
+}
+
+section.section-listing li article.goal-item h2 {
+  color: #664d03;
+}
+
+section.section-listing li article.goal-item p {
+  color: #664d03;
+}
+
+section.section-listing li article.goal-item .meta {
+  color: #856404;
+}
+
+section.section-listing li article.goal-item:hover {
+  box-shadow: 0 12px 20px rgba(255, 193, 7, 0.3);
 }

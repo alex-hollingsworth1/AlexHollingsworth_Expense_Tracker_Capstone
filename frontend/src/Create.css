@@ -1,7 +1,7 @@
 /* Transactions list styles - copied from Django transactions.css */
 
 section.section-listing {
-  width: min(90%, 50rem);
+  width: min(95%, 70rem);
   margin: 6rem auto 2rem;
   font-family: 'Montserrat', sans-serif;
 }
@@ -13,10 +13,12 @@ section.section-listing h1 {
 }
 
 section.section-listing h2 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.4rem;
+  margin-top: 0;
   color: #e9f5ee;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
+  line-height: 1.3;
 }
 
 section.section-listing ul {
@@ -24,17 +26,27 @@ section.section-listing ul {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 section.section-listing li article {
   background: #0f5132;
   border: 1px solid #0c3f26;
   border-radius: 8px;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
   color: #e9f5ee;
   font-family: 'Montserrat', sans-serif;
+}
+
+section.section-listing li article p {
+  margin: 0;
+  margin-top: 0.3rem;
+  line-height: 1.4;
 }
 
 section.section-listing li article:hover {
@@ -95,9 +107,11 @@ section.section-listing li article a:hover {
 }
 
 section.section-listing .meta {
-  margin-top: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
   color: #b4f0c8;
   font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 /* Create Form Styles */
@@ -311,5 +325,52 @@ section.section-listing .meta {
 .loading-overlay .spinner {
   border-top-color: #fff;
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Add Category and Cancel Button Styles */
+.create-form .btn-add-category {
+  flex: 1;
+  background-color: #198754;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.create-form .btn-add-category:hover {
+  background-color: #157347;
+  transform: translateY(-1px);
+}
+
+.create-form .btn-add-category:active {
+  transform: translateY(0);
+}
+
+.create-form .btn-cancel {
+  flex: 1;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.create-form .btn-cancel:hover {
+  background-color: #bb2d3b;
+  transform: translateY(-1px);
+}
+
+.create-form .btn-cancel:active {
+  transform: translateY(0);
 }
 

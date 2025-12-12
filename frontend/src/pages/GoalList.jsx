@@ -126,7 +126,7 @@ function GoalList() {
           {filteredGoals.map((goal) => (
             <li key={goal.id}>
               <Link to={`/goals/${goal.id}`}>
-              <article>
+              <article className="goal-item">
                 <h2>{goal.name}</h2>
                 <p className="meta">
                   <strong>Target:</strong> ${goal.target} · <strong>Deadline:</strong> {goal.deadline} · <strong>Status:</strong> {goal.status}

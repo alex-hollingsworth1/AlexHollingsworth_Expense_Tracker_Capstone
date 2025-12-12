@@ -25,6 +25,79 @@
   color: #0f5132;
 }
 
+/* Color-coded dashboard card styles */
+.dashboard-card-expense {
+  background: rgba(248, 215, 218, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 15px 30px rgba(220, 53, 69, 0.1);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.25rem;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid rgba(245, 194, 199, 0.5);
+}
+
+.dashboard-card-expense h2 {
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: #721c24;
+}
+
+.dashboard-card-income {
+  background: rgba(209, 231, 221, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 15px 30px rgba(25, 135, 84, 0.1);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.25rem;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid rgba(186, 219, 204, 0.5);
+}
+
+.dashboard-card-income h2 {
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: #0f5132;
+}
+
+.dashboard-card-budget {
+  background: rgba(207, 226, 255, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 15px 30px rgba(13, 110, 253, 0.1);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.25rem;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid rgba(182, 212, 254, 0.5);
+}
+
+.dashboard-card-budget h2 {
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: #084298;
+}
+
+.dashboard-card-goal {
+  background: rgba(255, 243, 205, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 15px 30px rgba(255, 193, 7, 0.1);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.25rem;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid rgba(255, 236, 181, 0.5);
+}
+
+.dashboard-card-goal h2 {
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: #664d03;
+}
+
 .dashboard-card ul {
   list-style: none;
   margin: 0;
@@ -96,5 +169,143 @@
 .summary-pill.net-positive {
   background: rgba(25, 135, 84, 0.18);
   color: #0a3622;
+}
+
+/* Color-coded summary pill styles */
+.summary-pill-income {
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  background: #d1e7dd;
+  color: #0f5132;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(25, 135, 84, 0.15);
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid #badbcc;
+}
+
+.summary-pill-expense {
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  background: #f8d7da;
+  color: #721c24;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid #f5c2c7;
+}
+
+.summary-pill-budget {
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  background: #cfe2ff;
+  color: #084298;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(13, 110, 253, 0.15);
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid #b6d4fe;
+}
+
+.summary-pill-goal {
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  background: #fff3cd;
+  color: #664d03;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(255, 193, 7, 0.15);
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid #ffecb5;
+}
+
+/* Color-coded item styles for Dashboard */
+.dashboard-card li article.expense-item {
+  background: #f8d7da;
+  border-color: #f5c2c7;
+  color: #721c24;
+}
+
+.dashboard-card li article.expense-item h3 {
+  color: #721c24;
+}
+
+.dashboard-card li article.expense-item p {
+  color: #721c24;
+}
+
+.dashboard-card li article.expense-item .meta {
+  color: #842029;
+}
+
+.dashboard-card li article.expense-item:hover {
+  box-shadow: 0 12px 20px rgba(220, 53, 69, 0.3);
+}
+
+.dashboard-card li article.income-item {
+  background: #d1e7dd;
+  border-color: #badbcc;
+  color: #0f5132;
+}
+
+.dashboard-card li article.income-item h3 {
+  color: #0f5132;
+}
+
+.dashboard-card li article.income-item p {
+  color: #0f5132;
+}
+
+.dashboard-card li article.income-item .meta {
+  color: #0a3622;
+}
+
+.dashboard-card li article.income-item:hover {
+  box-shadow: 0 12px 20px rgba(25, 135, 84, 0.3);
+}
+
+.dashboard-card li article.budget-item {
+  background: #cfe2ff;
+  border-color: #b6d4fe;
+  color: #084298;
+}
+
+.dashboard-card li article.budget-item h3 {
+  color: #084298;
+}
+
+.dashboard-card li article.budget-item p {
+  color: #084298;
+}
+
+.dashboard-card li article.budget-item .meta {
+  color: #052c65;
+}
+
+.dashboard-card li article.budget-item:hover {
+  box-shadow: 0 12px 20px rgba(13, 110, 253, 0.3);
+}
+
+.dashboard-card li article.goal-item {
+  background: #fff3cd;
+  border-color: #ffecb5;
+  color: #664d03;
+}
+
+.dashboard-card li article.goal-item h3 {
+  color: #664d03;
+}
+
+.dashboard-card li article.goal-item p {
+  color: #664d03;
+}
+
+.dashboard-card li article.goal-item .meta {
+  color: #856404;
+}
+
+.dashboard-card li article.goal-item:hover {
+  box-shadow: 0 12px 20px rgba(255, 193, 7, 0.3);
 }
 

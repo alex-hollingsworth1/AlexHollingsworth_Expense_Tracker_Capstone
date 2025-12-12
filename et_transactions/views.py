@@ -7,6 +7,8 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+
+from et_transactions.data.categories import DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES
 from .serializers import (
     ExpenseSerializer,
     CategorySerializer,
@@ -92,6 +94,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        queryset = Category.objects.all()
+        category_type = self.request.query_params.get('type')
+        
+        if category_type:
+            if category_type in ['EXPENSE', 'INCOME']:
+                queryset = queryset.filter(category_type=category_type)
+        
+        return queryset
 
 
 class DashboardAPIView(APIView):

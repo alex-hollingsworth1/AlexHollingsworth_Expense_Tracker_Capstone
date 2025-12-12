@@ -84,8 +84,9 @@ async function fetchGoals() {
   return await apiRequest("/goals/")
 }
 
-async function fetchCategories() {
-  return await apiRequest("/categories/")
+async function fetchCategories(type = null) {
+  const endpoint = type ? `/categories/?type=${type}` : "/categories/";
+  return await apiRequest(endpoint);
 }
 
 async function fetchExpense(id) {
@@ -176,6 +177,17 @@ async function refreshAccessToken() {
   localStorage.removeItem("refresh_token")
   throw error;
   }
+}
+
+async function createCategory(categoryData) {
+  const createdCategory = await apiRequest("/categories/", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(categoryData)
+  });
+  return createdCategory;
 }
 
 async function createExpense(expenseData) {
@@ -297,5 +309,6 @@ export {
   deleteExpense,
   deleteIncome,
   deleteBudget,
-  deleteGoal
+  deleteGoal,
+  createCategory
 }

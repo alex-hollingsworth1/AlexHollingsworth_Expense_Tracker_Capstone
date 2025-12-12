@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import { createIncome, fetchCategories } from '../services/api'
+import { createIncome, fetchCategories, createCategory } from '../services/api'
 import '../Create.css'
 
 function CreateIncome() {
     const [amount, setAmount] = useState(null)
     const [date, setDate] = useState("")
     const [category, setCategory] = useState("")
+    const [addCategory, setAddCategory] = useState(false)
+    const [newCategoryName, setNewCategoryName] = useState("")
     const [categories, setCategories] = useState([])
     const [note, setNote] = useState("")
     const [successMessage, setSuccessMessage] = useState(null)
@@ -13,16 +15,52 @@ function CreateIncome() {
     const [errors, setErrors] = useState({})
 
     useEffect(() => {
-        fetchCategories()
+        fetchCategories('INCOME')
             .then(setCategories)
             .catch(console.error)
-    }, [])
+    }, [addCategory])
 
     const resetForm = () => {
         setAmount(null)
         setDate("")
         setCategory("")
         setNote("")
+    }
+
+    const handleNewCategory = async (category_name) => {
+        // Validate category name
+        if (!category_name || category_name.trim() === '') {
+            setErrors({...errors, category: "Category name is required"})
+            return
+        }
+    
+        try {
+            // Create category data
+            const categoryData = {
+                'name': category_name.trim(),
+                'category_type': 'INCOME'
+            }
+    
+            // Create the category
+            const createdCategory = await createCategory(categoryData)
+    
+            // Refresh categories list
+            const updatedCategories = await fetchCategories('INCOME')
+            setCategories(updatedCategories)
+    
+            // Set the newly created category as selected
+            setCategory(createdCategory.id.toString())
+            
+            // Clear the new category name input
+            setNewCategoryName("")
+            
+            // Close the add category input
+            setAddCategory(false)
+    
+        } catch (error) {
+            setErrorMessage("Failed to create category. Please try again.")
+            console.error("Failed to create category:", error)
+        }
     }
 
     const validateForm = () => {
@@ -113,17 +151,55 @@ function CreateIncome() {
                     {errors.amount && <div className="field-error">{errors.amount}</div>}
                 </div>
                 <div>
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className={errors.category ? 'error' : ''}
-                        required
-                    >
-                        <option value="">Select a category</option>
-                        {categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </select>
+                    {addCategory ? (
+                        <div>
+                            <input
+                                type="text"
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                placeholder="Enter new category name"
+                            />
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                <button 
+                                    type="button" 
+                                    onClick={() => handleNewCategory(newCategoryName)} 
+                                    className="btn-add-category"
+                                >
+                                    Add Category
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        setAddCategory(false)
+                                        setNewCategoryName("")
+                                    }} 
+                                    className="btn-cancel"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <select
+                            value={category}
+                            onChange={(e) => {
+                                if (e.target.value === "add_new") {
+                                    setAddCategory(true)
+                                    setCategory("")
+                                } else {
+                                    setCategory(e.target.value)
+                                }
+                            }}
+                            className={errors.category ? 'error': ''}
+                            required
+                        >
+                            <option value="">Select a category</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                            <option value="add_new">➕ Add New Category</option>
+                        </select>
+                    )}
                     {errors.category && <div className="field-error">{errors.category}</div>}
                 </div>
                 <div>
@@ -150,7 +226,7 @@ function CreateIncome() {
                     />
                     {errors.note && <div className="field-error">{errors.note}</div>}
                 </div>
-                
+
                 <button type="submit">Create Income</button>
             </form>
         </section>

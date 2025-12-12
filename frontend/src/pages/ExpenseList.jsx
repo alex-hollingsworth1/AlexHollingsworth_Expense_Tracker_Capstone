@@ -32,7 +32,7 @@ function ExpenseList() {
       .then(setAllExpenses)
       .catch(console.error)
 
-    fetchCategories()
+    fetchCategories('EXPENSE')
       .then(setCategories)
       .catch(console.error)
   }, [])
@@ -122,7 +122,7 @@ function ExpenseList() {
           {filteredExpenses.map((expense) => (
             <li key={expense.id}>
               <Link to={`/expenses/${expense.id}`}>
-                <article>
+                <article className="expense-item">
                   <h2>{expense.category.name}</h2>
                   <p className="meta">
                     <strong>Date:</strong> {expense.date} · <strong>Amount:</strong> ${expense.amount}

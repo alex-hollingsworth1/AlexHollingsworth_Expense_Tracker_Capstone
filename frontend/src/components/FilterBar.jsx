@@ -87,7 +87,6 @@ function FilterBar({ filters, onFilterChange, categories }) {
                 >
                     <option value="">All Categories</option>
                     {categories && categories
-                        .filter(cat => cat.category_type === 'EXPENSE' || cat.category_type === 'INCOME')
                         .map(category => (
                             <option key={category.id} value={category.id}>
                                 {category.name}

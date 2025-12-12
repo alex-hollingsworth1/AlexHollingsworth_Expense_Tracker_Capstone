@@ -31,7 +31,7 @@ function IncomeList() {
       .then(setAllIncome)
       .catch(console.error)
 
-    fetchCategories()
+    fetchCategories('INCOME')
       .then(setCategories)
       .catch(console.error)
   }, [])
@@ -120,7 +120,7 @@ function IncomeList() {
             {filteredIncome.map((income) => (
               <li key={income.id}>
                 <Link to={`/income/${income.id}`}>
-                  <article>
+                  <article className="income-item">
                     <h2>{income.category.name}</h2>
                     <p className="meta">
                       <strong>Date:</strong> {income.date} · <strong>Amount:</strong> ${income.amount}

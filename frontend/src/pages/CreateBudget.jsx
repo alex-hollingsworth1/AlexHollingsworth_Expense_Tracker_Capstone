@@ -14,7 +14,7 @@ function CreateBudget() {
     const [errors, setErrors] = useState({})
 
     useEffect(() => {
-        fetchCategories()
+        fetchCategories('EXPENSE')
             .then(setCategories)
             .catch(console.error)
     }, [])
