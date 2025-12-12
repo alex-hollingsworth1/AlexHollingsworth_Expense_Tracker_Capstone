@@ -11,23 +11,36 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-lm(jthejpl*r%(hxl&l0zvcu+35_menkp%ohb6bqmoy82=jkyu"
-)
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS: list[str] = []
+# SECURITY WARNING: keep the secret key used in production secret!
+# Get SECRET_KEY from environment
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+# Only use fallback in development (when DEBUG=True)
+if not SECRET_KEY:
+    if DEBUG:
+        # Development fallback with warning
+        SECRET_KEY = '$3umy+8sk!k%jj59ht+=i#7ie6%d8wb^1g)83)mbgz6o_5#i8f'
+        print("WARNING: Using fallback SECRET_KEY. Set SECRET_KEY in .env!")
+    else:
+        # Production: fail if missing (forces proper configuration)
+        raise ValueError("SECRET_KEY environment variable is required in production!")
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
 
 # Application definition
@@ -152,6 +165,10 @@ REST_FRAMEWORK = {
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite default port
-    "http://localhost:3000",  # Alternative React port (if you use it)
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:5173,http://localhost:3000'
+    ).split(',')
+    if origin.strip()
 ]

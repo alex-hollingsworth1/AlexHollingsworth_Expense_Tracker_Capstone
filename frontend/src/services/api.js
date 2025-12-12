@@ -6,9 +6,9 @@
  */
 
 // Base URL for the Django backend
-// In development, Django typically runs on http://localhost:8000
-// TODO: When we create API endpoints, they'll be at /api/ or /transactions/api/
-const API_BASE_URL = 'http://localhost:8000'
+// Loaded from environment variable (VITE_API_BASE_URL)
+// Falls back to localhost:8000 if not set
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 /**
  * Helper function to make API requests
