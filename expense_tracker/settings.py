@@ -47,6 +47,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_
 
 INSTALLED_APPS = [
     "et_transactions",
+    "phonenumber_field",
     "rest_framework",
     "corsheaders",
     "django.contrib.admin",

@@ -50,7 +50,13 @@ function DeleteExpense() {
     }
 
     if (loading) {
-        return <p>Loading expense...</p>
+        return (
+            <section className="section-detail">
+                <div className="detail-card detail-card-expense">
+                    <p>Loading expense...</p>
+                </div>
+            </section>
+        )
     }
 
     return (
@@ -80,15 +86,30 @@ function DeleteExpense() {
 
             {/* Display expense details (read-only) */}
             {expense ? (
-                <article>
-                    <h2>{expense.category.name}</h2>
-                    <p className="meta">
-                        <strong>Amount:</strong> ${expense.amount} · <strong>Date:</strong> {expense.date}
-                    </p>
-                    <p>{expense.note || 'No note provided.'}</p>
-                </article>
+                <div className="detail-card detail-card-expense">
+                    <article>
+                        <h2>{expense.category.name}</h2>
+                        <p className="meta">
+                            <strong>Amount:</strong> ${expense.amount}
+                        </p>
+                        <p>
+                            <strong>Date:</strong> {expense.date}
+                        </p>
+                        <p>
+                            <strong>Client:</strong> {expense.client?.name || 'No client provided.'}
+                        </p>
+                        <p>
+                            <strong>Project:</strong> {expense.project?.name || 'No project provided.'}
+                        </p>
+                        <p>
+                            <strong>Note:</strong> {expense.note || 'No note provided.'}
+                        </p>
+                    </article>
+                </div>
             ) : (
-                <p>No expense found.</p>
+                <div className="detail-card detail-card-expense">
+                    <p>No expense found.</p>
+                </div>
             )}
 
             {/* Action buttons */}

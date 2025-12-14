@@ -10,6 +10,80 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
+from phonenumber_field.modelfields import PhoneNumberField
+
+# ----------------------Client Model----------------------
+
+
+class Client(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="clients")
+    name = models.CharField(max_length=150)
+    email = models.EmailField(
+        ("email address"),
+        max_length=254,
+    )
+    phone_number = PhoneNumberField(null=True, blank=True)
+
+    class Meta:
+        """Meta class for the Client model."""
+
+        verbose_name = "client"
+        verbose_name_plural = "clients"
+        ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "email"],
+                name="unique_email_name",
+            )
+        ]
+
+    def __str__(self):
+       return f"{self.name} ({self.email})"
+
+    def number_of_projects(self):
+        return self.projects.count()
+
+    def total_income(self):
+        return self.incomes.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+
+    def total_expenses(self):
+        return self.expenses.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+
+
+# ----------------------Project Model----------------------
+
+
+class Project(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="projects")
+    client = models.ForeignKey(
+        Client, on_delete=models.SET_NULL, null=True, related_name="projects"
+    )
+    name = models.CharField(max_length=150)
+    date_created = models.DateField()
+    note = models.CharField(max_length=250, blank=True, null=True)
+
+    def __str__(self):
+       return f"{self.name} - {self.client.name if self.client else 'No Client'} ({self.date_created})"
+
+    def number_of_expense_transactions(self):
+        return self.expenses.count()
+
+    def number_of_income_transactions(self):
+        return self.incomes.count()
+
+    def total_expenses_amount(self):
+        return self.expenses.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+
+    def total_income_amount(self):
+        return self.incomes.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+
+    class Meta:
+        """Meta class for the Project model."""
+
+        verbose_name = "project"
+        verbose_name_plural = "projects"
+        ordering = ["-date_created"]
 
 
 # ----------------------Category Models----------------------
@@ -54,11 +128,23 @@ class Category(models.Model):
 class Expense(models.Model):
     """Expense record with amount, date, note and category ID."""
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="expenses"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="expenses")
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="expenses"
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.SET_NULL,
+        related_name="expenses",
+        null=True,
+        blank=True,
+    )
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.SET_NULL,
+        related_name="expenses",
+        null=True,
+        blank=True,
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
@@ -74,11 +160,23 @@ class Expense(models.Model):
 class Income(models.Model):
     """Income record with amount, date, note and category ID."""
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="income"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="incomes")
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="incomes"
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.SET_NULL,
+        related_name="incomes",
+        null=True,
+        blank=True,
+    )
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.SET_NULL,
+        related_name="incomes",
+        null=True,
+        blank=True,
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
@@ -95,9 +193,7 @@ class Budget(models.Model):
     """Budget for a category with start/end dates, amount and
     progress."""
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="budgets"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="budgets")
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="budgets"
     )
@@ -108,9 +204,7 @@ class Budget(models.Model):
     dates = models.CharField(
         max_length=255,
         blank=True,
-        help_text=(
-            "Comma-separated list of YYYY-MM-DD checkpoints " "(start,end,...)"
-        ),
+        help_text=("Comma-separated list of YYYY-MM-DD checkpoints " "(start,end,...)"),
     )
     remaining_amount = models.DecimalField(
         max_digits=10, decimal_places=2, editable=False
@@ -147,9 +241,7 @@ class Budget(models.Model):
         ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
         remaining = self.amount - total_spent
         percentage = (
-            Decimal("0")
-            if self.amount == 0
-            else (total_spent / self.amount) * 100
+            Decimal("0") if self.amount == 0 else (total_spent / self.amount) * 100
         )
         return remaining, percentage
 
@@ -166,9 +258,7 @@ class Budget(models.Model):
 class Goal(models.Model):
     """Financial goal with target, deadline and status."""
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="goals"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="goals")
     name = models.CharField(max_length=150)
     target = models.DecimalField(max_digits=10, decimal_places=2)
     deadline = models.DateField()
@@ -185,8 +275,6 @@ class Goal(models.Model):
 class UserProfile(models.Model):
     """User profile with name and date of birth."""
 
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="profile"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     name = models.CharField(max_length=150)
     date_of_birth = models.DateField(null=True, blank=True)

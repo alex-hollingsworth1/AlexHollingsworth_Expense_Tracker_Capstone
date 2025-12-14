@@ -50,7 +50,13 @@ function DeleteGoal() {
     }
 
     if (loading) {
-        return <p>Loading goal...</p>
+        return (
+            <section className="section-detail">
+                <div className="detail-card detail-card-goal">
+                    <p>Loading goal...</p>
+                </div>
+            </section>
+        )
     }
 
     return (
@@ -80,15 +86,27 @@ function DeleteGoal() {
 
             {/* Display goal details (read-only) */}
             {goal ? (
-                <article>
-                    <h2>{goal.name}</h2>
-                    <p className="meta">
-                        <strong>Target:</strong> ${goal.target} · <strong>Deadline:</strong> {goal.deadline} · <strong>Status:</strong> {goal.status}
-                    </p>
-                    <p>{goal.note || 'No note provided.'}</p>
-                </article>
+                <div className="detail-card detail-card-goal">
+                    <article>
+                        <h2>{goal.name}</h2>
+                        <p className="meta">
+                            <strong>Target:</strong> ${goal.target}
+                        </p>
+                        <p>
+                            <strong>Deadline:</strong> {goal.deadline}
+                        </p>
+                        <p>
+                            <strong>Status:</strong> {goal.status || 'No status provided.'}
+                        </p>
+                        <p>
+                            <strong>Note:</strong> {goal.note || 'No note provided.'}
+                        </p>
+                    </article>
+                </div>
             ) : (
-                <p>No goal found.</p>
+                <div className="detail-card detail-card-goal">
+                    <p>No goal found.</p>
+                </div>
             )}
 
             {/* Action buttons */}

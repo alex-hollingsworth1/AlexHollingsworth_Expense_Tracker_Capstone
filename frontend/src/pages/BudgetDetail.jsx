@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { fetchBudget } from '../services/api'
 import '../Transactions.css'
-
-// ExpenseDetail.jsx
 
 const BudgetDetail = () => {
     const { id } = useParams()
@@ -18,23 +16,43 @@ const BudgetDetail = () => {
 
     return (
         <section className="section-detail">
+            <div style={{ textAlign: 'left', marginBottom: '1rem', marginLeft: '-1rem' }}>
+                <Link 
+                    to="/budgets" 
+                    className="summary-pill summary-pill-small"
+                >
+                    ← Back to Budgets
+                </Link>
+            </div>
             <h1>Budget Detail</h1>
             {budget ? (
-                <article>
-                    <h2>{budget.category.name}</h2>
-                    <p className="meta">
-                        <strong>Amount:</strong> ${budget.amount} · <strong>Period:</strong> {budget.start_date} to {budget.end_date}
-                    </p>
-                    <p>{budget.note || 'No note provided.'}</p>
-                </article>
+                <div className="detail-card detail-card-budget">
+                    <article>
+                        <h2>{budget.category.name}</h2>
+                        <p className="meta">
+                            <strong>Amount:</strong> ${budget.amount}
+                        </p>
+                        <p>
+                            <strong>Start Date:</strong> {budget.start_date}
+                        </p>
+                        <p>
+                            <strong>End Date:</strong> {budget.end_date}
+                        </p>
+                        <p>
+                            <strong>Note:</strong> {budget.note || 'No note provided.'}
+                        </p>
+                    </article>
+                </div>
             ) : (
-                <p>No budget found.</p>
+                <div className="detail-card detail-card-budget">
+                    <p>Loading budget details...</p>
+                </div>
             )}
             <div className="action-buttons-container">
                 <div className="summary-pill summary-pill-small" onClick={() => navigate(`/edit-budget/${id}`)}>
                     Edit
                 </div>
-                <div className="summary-pill summary-pill-small" onClick={() => navigate(`/delete-budget/${id}`)}>
+                <div className="summary-pill-small-delete-red" onClick={() => navigate(`/delete-budget/${id}`)}>
                     Delete
                 </div>
             </div>

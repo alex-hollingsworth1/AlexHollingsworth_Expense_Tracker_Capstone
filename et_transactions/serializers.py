@@ -3,67 +3,112 @@
 # pylint: disable=no-member
 
 from rest_framework import serializers
-from .models import Expense, Category, Income, Budget, Goal
+from .models import Expense, Category, Income, Budget, Goal, Project, Client
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Serializer for the Category model."""
-
     class Meta:
-        """Meta class for the CategorySerializer."""
-
         model = Category
         fields = "__all__"
 
 
-class ExpenseSerializer(serializers.ModelSerializer):
-    """Serializer for the Expense model."""
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = "__all__"
+        read_only_fields = ["user"]
 
+
+class ProjectSerializer(serializers.ModelSerializer):
+    client = ClientSerializer(read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.none(),  # Placeholder - will be set in __init__
+        source="client", 
+        write_only=True,
+        required=False,
+        allow_null=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            self.fields['client_id'].queryset = Client.objects.filter(user=request.user)
+
+    class Meta:
+        model = Project
+        fields = "__all__"
+        read_only_fields = ["user"]
+
+
+class ExpenseSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), source="category", write_only=True
     )
-    amount = serializers.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0
+    project = ProjectSerializer(read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        queryset=Project.objects.none(),  # Placeholder - will be set in __init__
+        source="project", write_only=True, required=False, allow_null=True
     )
+    
+    client = ClientSerializer(read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.none(),  # Placeholder - will be set in __init__
+        source="client", write_only=True, required=False, allow_null=True
+    )
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            self.fields['project_id'].queryset = Project.objects.filter(user=request.user)
+            self.fields['client_id'].queryset = Client.objects.filter(user=request.user)
 
     class Meta:
-        """Meta class for the ExpenseSerializer."""
-
         model = Expense
         fields = "__all__"
         read_only_fields = ["user"]
 
 
 class IncomeSerializer(serializers.ModelSerializer):
-    """Serializer for the Income model."""
-
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), source="category", write_only=True
     )
-    amount = serializers.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0
+    project = ProjectSerializer(read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        queryset=Project.objects.none(),  # Placeholder - will be set in __init__
+        source="project", write_only=True, required=False, allow_null=True
     )
+    
+    client = ClientSerializer(read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.none(),  # Placeholder - will be set in __init__
+        source="client", write_only=True, required=False, allow_null=True
+    )
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            self.fields['project_id'].queryset = Project.objects.filter(user=request.user)
+            self.fields['client_id'].queryset = Client.objects.filter(user=request.user)
 
     class Meta:
-        """Meta class for the IncomeSerializer."""
-
         model = Income
         fields = "__all__"
         read_only_fields = ["user"]
 
 
 class BudgetSerializer(serializers.ModelSerializer):
-    """Serializer for the Budget model."""
-
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), source="category", write_only=True
     )
-    amount = serializers.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0
-    )
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0)
 
     # pylint: disable=arguments-renamed
     def validate(self, data):
@@ -81,23 +126,15 @@ class BudgetSerializer(serializers.ModelSerializer):
         return data
 
     class Meta:
-        """Meta class for the BudgetSerializer."""
-
         model = Budget
         fields = "__all__"
         read_only_fields = ["user"]
 
 
 class GoalSerializer(serializers.ModelSerializer):
-    """Serializer for the Goal model."""
-
-    target = serializers.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0
-    )
+    target = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0)
 
     class Meta:
-        """Meta class for the GoalSerializer."""
-
         model = Goal
         fields = "__all__"
         read_only_fields = ["user"]

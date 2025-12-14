@@ -50,7 +50,13 @@ function DeleteIncome() {
     }
 
     if (loading) {
-        return <p>Loading income...</p>
+        return (
+            <section className="section-detail">
+                <div className="detail-card detail-card-income">
+                    <p>Loading income...</p>
+                </div>
+            </section>
+        )
     }
 
     return (
@@ -80,15 +86,30 @@ function DeleteIncome() {
 
             {/* Display income details (read-only) */}
             {income ? (
-                <article>
-                    <h2>{income.category.name}</h2>
-                    <p className="meta">
-                        <strong>Amount:</strong> ${income.amount} · <strong>Date:</strong> {income.date}
-                    </p>
-                    <p>{income.note || 'No note provided.'}</p>
-                </article>
+                <div className="detail-card detail-card-income">
+                    <article>
+                        <h2>{income.category.name}</h2>
+                        <p className="meta">
+                            <strong>Amount:</strong> ${income.amount}
+                        </p>
+                        <p>
+                            <strong>Date:</strong> {income.date}
+                        </p>
+                        <p>
+                            <strong>Client:</strong> {income.client?.name || 'No client provided.'}
+                        </p>
+                        <p>
+                            <strong>Project:</strong> {income.project?.name || 'No project provided.'}
+                        </p>
+                        <p>
+                            <strong>Note:</strong> {income.note || 'No note provided.'}
+                        </p>
+                    </article>
+                </div>
             ) : (
-                <p>No income found.</p>
+                <div className="detail-card detail-card-income">
+                    <p>No income found.</p>
+                </div>
             )}
 
             {/* Action buttons */}

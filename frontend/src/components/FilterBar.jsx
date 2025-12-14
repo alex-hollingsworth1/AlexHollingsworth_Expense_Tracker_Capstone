@@ -1,11 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 
-function FilterBar({ filters, onFilterChange, categories }) {
+function FilterBar({ filters, onFilterChange, categories = null, clients = null }) {
     // Handler for category change
     const handleCategoryChange = (e) => {
         onFilterChange({
             ...filters,
             category: e.target.value
+        })
+    }
+
+    // Handler for client change
+    const handleClientChange = (e) => {
+        onFilterChange({
+            ...filters,
+            client: e.target.value
         })
     }
 
@@ -77,24 +85,43 @@ function FilterBar({ filters, onFilterChange, categories }) {
     return (
         <div className="filter-bar">
 
-            {/* Category Filter */}
-            <div className="filter-slot">
-                <label>Category</label>
-                <select
-                    className="filter-dropdown"
-                    value={filters.category}
-                    onChange={handleCategoryChange}
-                >
-                    <option value="">All Categories</option>
-                    {categories && categories
-                        .map(category => (
+            {/* Category Filter - Only show if categories provided */}
+            {categories && (
+                <div className="filter-slot">
+                    <label>Category</label>
+                    <select
+                        className="filter-dropdown"
+                        value={filters.category || ''}
+                        onChange={handleCategoryChange}
+                    >
+                        <option value="">All Categories</option>
+                        {categories.map(category => (
                             <option key={category.id} value={category.id}>
                                 {category.name}
                             </option>
-                        ))
-                    }
-                </select>
-            </div>
+                        ))}
+                    </select>
+                </div>
+            )}
+
+            {/* Client Filter - Only show if clients provided */}
+            {clients && (
+                <div className="filter-slot">
+                    <label>Client</label>
+                    <select
+                        className="filter-dropdown"
+                        value={filters.client || ''}
+                        onChange={handleClientChange}
+                    >
+                        <option value="">All Clients</option>
+                        {clients.map(client => (
+                            <option key={client.id} value={client.id}>
+                                {client.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
 
             {/* Date From */}
             <div className="filter-slot">

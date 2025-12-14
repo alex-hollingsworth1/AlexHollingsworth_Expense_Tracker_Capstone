@@ -1,32 +1,16 @@
-/**
- * API Service Layer
- * 
- * This file contains functions to communicate with the Django backend API.
- * All API calls should go through functions defined here.
- */
-
-// Base URL for the Django backend
-// Loaded from environment variable (VITE_API_BASE_URL)
-// Falls back to localhost:8000 if not set
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
-/**
- * Helper function to make API requests
- * This is a reusable wrapper around fetch() for consistency
- * 
- * @param {string} endpoint - The API endpoint (e.g., '/transactions/api/expenses')
- * @param {object} options - Fetch options (method, headers, body, etc.)
- * @returns {Promise} - The parsed JSON response
- */
+let isRefreshing = false
+let refreshPromise = null
+
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`
 
-  // Set default headers
   const defaultHeaders = {
     'Content-Type': 'application/json',
   }
 
-  const token = localStorage.getItem('access_token'); 
+  const token = localStorage.getItem('access_token');
 
   if (token) {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
@@ -42,6 +26,47 @@ async function apiRequest(endpoint, options = {}) {
 
   try {
     const response = await fetch(url, config)
+
+    if (response.status === 401) {
+      // Skip refresh for login/token endpoints to avoid infinite loops
+      if (endpoint.includes('/api/token/')) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`)
+      }
+
+      // Try to refresh token and retry request
+      try {
+        await refreshTokenIfNeeded()
+
+        // Retry the original request with new token
+        const newToken = localStorage.getItem('access_token')
+        if (newToken) {
+          config.headers['Authorization'] = `Bearer ${newToken}`
+          const retryResponse = await fetch(url, config)
+
+          if (!retryResponse.ok) {
+            throw new Error(`API Error: ${retryResponse.status} ${retryResponse.statusText}`)
+          }
+
+          // Handle empty responses
+          if (retryResponse.status === 204 || retryResponse.headers.get('content-length') === '0') {
+            return null
+          }
+
+          return await retryResponse.json()
+        }
+      } catch (refreshError) {
+        // Refresh failed - clear tokens and redirect to login
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+
+        // Redirect to login page
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
+
+        throw new Error('Session expired. Please login again.')
+      }
+    }
 
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`)
@@ -59,11 +84,27 @@ async function apiRequest(endpoint, options = {}) {
     console.error('API Request failed:', error)
     throw error
   }
+
 }
 
-/**
- * @returns {Promise<Object>} Dashboard data with expenses, income, budgets, goals, and totals
- */
+// Helper function to refresh token (handles concurrent requests)
+async function refreshTokenIfNeeded() {
+  // If already refreshing, wait for that promise
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise
+  }
+
+  // Start refresh process
+  isRefreshing = true
+  refreshPromise = refreshAccessToken()
+    .finally(() => {
+      isRefreshing = false
+      refreshPromise = null
+    })
+
+  return refreshPromise
+}
+
 async function fetchDashboardData() {
   return await apiRequest("/api/dashboard/")
 }
@@ -84,35 +125,42 @@ async function fetchGoals() {
   return await apiRequest("/goals/")
 }
 
+async function fetchProjects() {
+  return await apiRequest("/projects/")
+}
+
+async function fetchClients() {
+  return await apiRequest("/clients/")
+}
+
 async function fetchCategories(type = null) {
   const endpoint = type ? `/categories/?type=${type}` : "/categories/";
   return await apiRequest(endpoint);
 }
 
 async function fetchExpense(id) {
-  // Get all expenses and find the one with matching ID
-  const expenses = await fetchExpenses()
-  return expenses.find(expense => expense.id === parseInt(id))
-}
-
-async function fetchBudget(id) {
-  // Get all budgets and find the one with matching ID
-  const budgets = await fetchBudgets()
-  return budgets.find(budget => budget.id === parseInt(id))
+  return await apiRequest(`/expenses/${id}`)
 }
 
 async function fetchIncome(id) {
-  // Get all income and find the one with matching ID
-  const incomes = await fetchIncomes()
-  return incomes.find(income => income.id === parseInt(id))
+  return await apiRequest(`/income/${id}`)
+}
+
+async function fetchBudget(id) {
+  return await apiRequest(`/budgets/${id}`)
 }
 
 async function fetchGoal(id) {
-  // Get all goals and find the one with matching ID
-  const goals = await fetchGoals()
-  return goals.find(goal => goal.id === parseInt(id))
+  return await apiRequest(`/goals/${id}`)
 }
 
+async function fetchProject(id) {
+  return await apiRequest(`/projects/${id}`)
+}
+
+async function fetchClient(id) {
+  return await apiRequest(`/clients/${id}`)
+}
 
 async function loginUser(username, password) {
   // Prepare the data
@@ -157,7 +205,7 @@ async function refreshAccessToken() {
   }
 
   try {
-  const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+    const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -165,17 +213,17 @@ async function refreshAccessToken() {
       body: JSON.stringify({ refresh: localStorage.getItem("refresh_token") })
     });
 
-  if (!response.ok) {
-    throw new Error("Token refresh failed.")
-  }
+    if (!response.ok) {
+      throw new Error("Token refresh failed.")
+    }
 
-  const data = await response.json()
-  localStorage.setItem('access_token', data.access);
-  return data.access
-} catch (error) {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token")
-  throw error;
+    const data = await response.json()
+    localStorage.setItem('access_token', data.access);
+    return data.access
+  } catch (error) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token")
+    throw error;
   }
 }
 
@@ -241,6 +289,22 @@ async function updateGoal(id, goalData) {
   return updatedGoal;
 }
 
+async function updateProject(id, projectData) {
+  const updatedProject = await apiRequest(`/projects/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(projectData)
+  });
+  return updatedProject;
+}
+
+async function updateClient(id, clientData) {
+  const updatedClient = await apiRequest(`/clients/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(clientData)
+  });
+  return updatedClient;
+}
+
 async function createBudget(budgetData) {
   const createdBudget = await apiRequest("/budgets/", {
     method: 'POST',
@@ -282,19 +346,56 @@ async function deleteGoal(id) {
   });
 }
 
-// Export all API functions
+async function deleteProject(id) {
+  await apiRequest(`/projects/${id}/`, {
+    method: 'DELETE'
+  });
+}
+
+async function deleteClient(id) {
+  await apiRequest(`/clients/${id}/`, {
+    method: 'DELETE'
+  });
+}
+
+async function createProject(projectData) {
+  const createdProject = await apiRequest("/projects/", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(projectData)
+  });
+  return createdProject;
+}
+
+async function createClient(clientData) {
+  const createdClient = await apiRequest("/clients/", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(clientData)
+  });
+  return createdClient;
+}
+
 export {
   apiRequest,
-  API_BASE_URL, 
-  fetchDashboardData, 
-  fetchExpenses, 
-  fetchIncomes, 
-  fetchBudgets, 
-  fetchGoals, 
-  fetchExpense, 
-  fetchBudget, 
-  fetchIncome, 
-  fetchGoal, 
+  API_BASE_URL,
+  fetchDashboardData,
+  fetchExpenses,
+  fetchIncomes,
+  fetchBudgets,
+  fetchGoals,
+  fetchProjects,
+  fetchClients,
+  fetchExpense,
+  fetchBudget,
+  fetchIncome,
+  fetchGoal,
+  fetchProject,
+  fetchClient,
   loginUser,
   refreshAccessToken,
   fetchCategories,
@@ -304,11 +405,17 @@ export {
   updateIncome,
   updateBudget,
   updateGoal,
+  updateProject,
+  updateClient,
   createBudget,
+  createProject,
+  createClient,
   createGoal,
   deleteExpense,
   deleteIncome,
   deleteBudget,
   deleteGoal,
-  createCategory
+  deleteProject,
+  deleteClient,
+  createCategory,
 }

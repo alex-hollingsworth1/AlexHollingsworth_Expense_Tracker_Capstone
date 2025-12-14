@@ -58,6 +58,8 @@ function Layout({ children }) {
                   <Link to="/create-budget" onClick={() => setShowCreateDropdown(false)}>Budget</Link>
                   <span style={{ marginLeft: '5px', marginRight: '5px' }}></span>
                   <Link to="/create-goal" onClick={() => setShowCreateDropdown(false)}>Goal</Link>
+                  <span style={{ marginLeft: '5px', marginRight: '5px' }}></span>
+                  <Link to="/create-project" onClick={() => setShowCreateDropdown(false)}>Project</Link>
                 </div>
               )}
             </div>
@@ -69,6 +71,8 @@ function Layout({ children }) {
             <Link to="/budgets">Budgets</Link>
             <span style={{ marginLeft: '5px', marginRight: '5px' }}></span>
             <Link to="/goals">Goals</Link>
+            <span style={{ marginLeft: '5px', marginRight: '5px' }}></span>
+            <Link to="/projects">Projects</Link>
             <span style={{ marginLeft: '5px', marginRight: '5px' }}></span>
             <Link onClick={() => logout()}>Logout</Link>
           </nav>

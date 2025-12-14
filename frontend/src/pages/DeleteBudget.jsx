@@ -50,7 +50,13 @@ function DeleteBudget() {
     }
 
     if (loading) {
-        return <p>Loading budget...</p>
+        return (
+            <section className="section-detail">
+                <div className="detail-card detail-card-budget">
+                    <p>Loading budget...</p>
+                </div>
+            </section>
+        )
     }
 
     return (
@@ -80,15 +86,27 @@ function DeleteBudget() {
 
             {/* Display budget details (read-only) */}
             {budget ? (
-                <article>
-                    <h2>{budget.category.name}</h2>
-                    <p className="meta">
-                        <strong>Amount:</strong> ${budget.amount} · <strong>Start Date:</strong> {budget.start_date} · <strong>End Date:</strong> {budget.end_date}
-                    </p>
-                    <p>{budget.note || 'No note provided.'}</p>
-                </article>
+                <div className="detail-card detail-card-budget">
+                    <article>
+                        <h2>{budget.category.name}</h2>
+                        <p className="meta">
+                            <strong>Amount:</strong> ${budget.amount}
+                        </p>
+                        <p>
+                            <strong>Start Date:</strong> {budget.start_date}
+                        </p>
+                        <p>
+                            <strong>End Date:</strong> {budget.end_date}
+                        </p>
+                        <p>
+                            <strong>Note:</strong> {budget.note || 'No note provided.'}
+                        </p>
+                    </article>
+                </div>
             ) : (
-                <p>No budget found.</p>
+                <div className="detail-card detail-card-budget">
+                    <p>No budget found.</p>
+                </div>
             )}
 
             {/* Action buttons */}

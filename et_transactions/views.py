@@ -15,11 +15,36 @@ from .serializers import (
     IncomeSerializer,
     BudgetSerializer,
     GoalSerializer,
+    ProjectSerializer,
+    ClientSerializer
 )
-from .models import Budget, Category, Expense, Goal, Income
+from .models import Budget, Category, Expense, Goal, Income, Project, Client
 
 
 # ----------------------API Views (DRF)----------------------
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        return Project.objects.filter(user=self.request.user).order_by("-date_created")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClientSerializer
+
+    def get_queryset(self):
+        return Client.objects.filter(user=self.request.user).order_by("name")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):

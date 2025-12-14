@@ -123,6 +123,7 @@ section.section-listing .meta {
   text-align: center;
   box-shadow: 0 10px 20px rgba(15, 81, 50, 0.1);
   font-family: 'Montserrat', sans-serif;
+  border: 1px solid rgba(25, 135, 84, 0.3);
 }
 
 .action-buttons-container {
@@ -271,4 +272,209 @@ section.section-listing li article.goal-item .meta {
 
 section.section-listing li article.goal-item:hover {
   box-shadow: 0 12px 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Detail Page Styles */
+section.section-detail {
+  width: min(80%, 30rem);
+  margin: 6rem auto 2rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+section.section-detail h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: #0f5132;
+  margin-bottom: 2rem;
+}
+
+/* Detail Card Container - Base Styles */
+.detail-card {
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: box-shadow 0.3s ease;
+  text-align: left;
+}
+
+.detail-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Detail Card Content */
+.detail-card h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  text-align: center;
+}
+
+.detail-card .meta {
+  font-size: 1.1rem;
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.detail-card .meta strong {
+  font-weight: 600;
+}
+
+.detail-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 1.5rem 0 0 0;
+  padding-top: 1rem;
+}
+
+/* Expense Detail Card (Red) */
+.detail-card-expense {
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  box-shadow: 0 8px 24px rgba(220, 53, 69, 0.15);
+}
+
+.detail-card-expense:hover {
+  box-shadow: 0 12px 32px rgba(220, 53, 69, 0.2);
+}
+
+.detail-card-expense h2 {
+  color: #721c24;
+  border-bottom: 2px solid rgba(114, 28, 36, 0.2);
+}
+
+.detail-card-expense .meta {
+  color: #842029;
+}
+
+.detail-card-expense .meta strong {
+  color: #721c24;
+}
+
+.detail-card-expense p {
+  color: #721c24;
+  border-top: 1px solid rgba(114, 28, 36, 0.1);
+}
+
+/* Income Detail Card (Green) */
+.detail-card-income {
+  background: #d1e7dd;
+  border: 1px solid #badbcc;
+  box-shadow: 0 8px 24px rgba(25, 135, 84, 0.15);
+}
+
+.detail-card-income:hover {
+  box-shadow: 0 12px 32px rgba(25, 135, 84, 0.2);
+}
+
+.detail-card-income h2 {
+  color: #0f5132;
+  border-bottom: 2px solid rgba(15, 81, 50, 0.2);
+}
+
+.detail-card-income .meta {
+  color: #0a3622;
+}
+
+.detail-card-income .meta strong {
+  color: #0f5132;
+}
+
+.detail-card-income p {
+  color: #0f5132;
+  border-top: 1px solid rgba(15, 81, 50, 0.1);
+}
+
+/* Budget Detail Card (Blue) */
+.detail-card-budget {
+  background: #cfe2ff;
+  border: 1px solid #b6d4fe;
+  box-shadow: 0 8px 24px rgba(13, 110, 253, 0.15);
+}
+
+.detail-card-budget:hover {
+  box-shadow: 0 12px 32px rgba(13, 110, 253, 0.2);
+}
+
+.detail-card-budget h2 {
+  color: #084298;
+  border-bottom: 2px solid rgba(8, 66, 152, 0.2);
+}
+
+.detail-card-budget .meta {
+  color: #052c65;
+}
+
+.detail-card-budget .meta strong {
+  color: #084298;
+}
+
+.detail-card-budget p {
+  color: #084298;
+  border-top: 1px solid rgba(8, 66, 152, 0.1);
+}
+
+/* Goal Detail Card (Yellow) */
+.detail-card-goal {
+  background: #fff3cd;
+  border: 1px solid #ffecb5;
+  box-shadow: 0 8px 24px rgba(255, 193, 7, 0.15);
+}
+
+.detail-card-goal:hover {
+  box-shadow: 0 12px 32px rgba(255, 193, 7, 0.2);
+}
+
+.detail-card-goal h2 {
+  color: #664d03;
+  border-bottom: 2px solid rgba(102, 77, 3, 0.2);
+}
+
+.detail-card-goal .meta {
+  color: #856404;
+}
+
+.detail-card-goal .meta strong {
+  color: #664d03;
+}
+
+.detail-card-goal p {
+  color: #664d03;
+  border-top: 1px solid rgba(102, 77, 3, 0.1);
+}
+
+/* Red Delete Button Variant */
+.summary-pill-delete {
+  background: rgba(220, 53, 69, 0.15);
+  color: #842029;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.summary-pill-delete:hover {
+  background: rgba(220, 53, 69, 0.25);
+  color: #721c24;
+  box-shadow: 0 8px 16px rgba(220, 53, 69, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Small variant for detail pages */
+.summary-pill-small-delete-red {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  background: rgba(220, 53, 69, 0.15);
+  color: #842029;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 999px;
+  font-weight: 600;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.summary-pill-small-delete-red:hover {
+  background: rgba(220, 53, 69, 0.25);
+  color: #721c24;
+  box-shadow: 0 8px 16px rgba(220, 53, 69, 0.2);
+  transform: translateY(-1px);
 }

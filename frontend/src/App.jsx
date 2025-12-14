@@ -25,6 +25,8 @@ import EditExpense from './pages/EditExpense'
 import EditIncome from './pages/EditIncome'
 import EditBudget from './pages/EditBudget'
 import EditGoal from './pages/EditGoal'
+import ProjectList from './pages/ProjectList'
+import CreateProject from './pages/CreateProject'
 
 function App() {
   return (
@@ -35,11 +37,14 @@ function App() {
         <Route path="/create-income" element={<ProtectedRoute><CreateIncome /></ProtectedRoute>} />
         <Route path="/create-budget" element={<ProtectedRoute><CreateBudget /></ProtectedRoute>} />
         <Route path="/create-goal" element={<ProtectedRoute><CreateGoal /></ProtectedRoute>} />
+        <Route path="/create-project" element={<ProtectedRoute><CreateProject /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/expenses" element={<ProtectedRoute><ExpenseList /></ProtectedRoute>} />
         <Route path="/income" element={<ProtectedRoute><IncomeList /></ProtectedRoute>} />
         <Route path="/budgets" element={<ProtectedRoute><BudgetList /></ProtectedRoute>} />
         <Route path="/goals" element={<ProtectedRoute><GoalList /></ProtectedRoute>} />
+        <Route path="/projects" element={<ProtectedRoute><ProjectList /></ProtectedRoute>} />
+        {/* <Route path="/clients" element={<ProtectedRoute><ClientList /></ProtectedRoute>} /> */}
         <Route path="/expenses/:id" element={<ProtectedRoute><ExpenseDetail /></ProtectedRoute>} />
         <Route path="/budgets/:id" element={<ProtectedRoute><BudgetDetail /></ProtectedRoute>} />
         <Route path="/income/:id" element={<ProtectedRoute><IncomeDetail /></ProtectedRoute>} />
