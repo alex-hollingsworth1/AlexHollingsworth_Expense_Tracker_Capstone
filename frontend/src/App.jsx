@@ -27,6 +27,7 @@ import EditBudget from './pages/EditBudget'
 import EditGoal from './pages/EditGoal'
 import ProjectList from './pages/ProjectList'
 import CreateProject from './pages/CreateProject'
+import ClientList from './pages/ClientList'
 
 function App() {
   return (
@@ -44,7 +45,7 @@ function App() {
         <Route path="/budgets" element={<ProtectedRoute><BudgetList /></ProtectedRoute>} />
         <Route path="/goals" element={<ProtectedRoute><GoalList /></ProtectedRoute>} />
         <Route path="/projects" element={<ProtectedRoute><ProjectList /></ProtectedRoute>} />
-        {/* <Route path="/clients" element={<ProtectedRoute><ClientList /></ProtectedRoute>} /> */}
+        <Route path="/clients" element={<ProtectedRoute><ClientList /></ProtectedRoute>} />
         <Route path="/expenses/:id" element={<ProtectedRoute><ExpenseDetail /></ProtectedRoute>} />
         <Route path="/budgets/:id" element={<ProtectedRoute><BudgetDetail /></ProtectedRoute>} />
         <Route path="/income/:id" element={<ProtectedRoute><IncomeDetail /></ProtectedRoute>} />
