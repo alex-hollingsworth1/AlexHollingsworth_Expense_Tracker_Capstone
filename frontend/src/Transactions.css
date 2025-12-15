@@ -507,3 +507,32 @@ section.section-detail h1 {
   color: #084298;
   border-top: 1px solid rgba(8, 66, 152, 0.1);
 }
+
+/* Client Detail Card */
+.detail-card-client {
+  background: #f3e5f5;  /* Light purple */
+  border: 1px solid #e1bee7;
+  box-shadow: 0 8px 24px rgba(156, 39, 176, 0.15);
+}
+
+.detail-card-client:hover {
+  box-shadow: 0 12px 32px rgba(156, 39, 176, 0.2);
+}
+
+.detail-card-client h2 {
+  color: #6a1b9a;
+  border-bottom: 2px solid rgba(106, 27, 154, 0.2);
+}
+
+.detail-card-client .meta {
+  color: #4a148c;
+}
+
+.detail-card-client .meta strong {
+  color: #6a1b9a;
+}
+
+.detail-card-client p {
+  color: #6a1b9a;
+  border-top: 1px solid rgba(106, 27, 154, 0.1);
+}
