@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createProject, fetchClients } from '../services/api'
-import '../Create.css'
+import '../styles/Create.css'
 
 function CreateProject() {
     const [name, setName] = useState("")

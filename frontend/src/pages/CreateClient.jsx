@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createClient } from '../services/api'
-import '../Create.css'
+import '../styles/Create.css'
 
 function CreateClient() {
     const [name, setName] = useState("")

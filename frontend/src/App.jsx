@@ -2,7 +2,7 @@
 import { Routes, Route } from 'react-router-dom'
 
 // Styles
-import './App.css'
+import './styles/App.css'
 
 // Components
 import Layout from './components/Layout'

@@ -183,7 +183,7 @@ The frontend will be available at `http://localhost:5173` (or the port Vite assi
 
 ```
 AlexHollingsworth_Expense_Tracker_Capstone/
-├── et_transactions/          # Django app
+├── api/                      # Django app (API backend)
 │   ├── models.py             # Database models
 │   ├── views.py              # API ViewSets
 │   ├── serializers.py        # DRF serializers

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchClients } from '../services/api'
 import FilterBar from '../components/FilterBar'
-import '../Transactions.css'
+import '../styles/Transactions.css'
 
 function ClientList() {
 

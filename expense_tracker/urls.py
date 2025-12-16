@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from et_transactions.views import (
+from api.views import (
     ExpenseViewSet,
     IncomeViewSet,
     BudgetViewSet,

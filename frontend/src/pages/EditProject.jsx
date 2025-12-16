@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchProject, updateProject, fetchClients } from "../services/api";
-import '../Create.css';
+import '../styles/Create.css';
 
 function EditProject() {
     const { id } = useParams()

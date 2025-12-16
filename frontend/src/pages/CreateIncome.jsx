@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createIncome, fetchCategories, createCategory } from '../services/api'
-import '../Create.css'
+import '../styles/Create.css'
 
 function CreateIncome() {
     const [amount, setAmount] = useState(null)

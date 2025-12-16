@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { fetchBudget } from '../services/api'
-import '../Transactions.css'
+import '../styles/Transactions.css'
 
 const BudgetDetail = () => {
     const { id } = useParams()

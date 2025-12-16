@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchGoal, updateGoal } from "../services/api";
-import '../Create.css';
+import '../styles/Create.css';
 
 function EditGoal() {
     const { id } = useParams()

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchDashboardData } from '../services/api'
-import '../Dashboard.css'
+import '../styles/Dashboard.css'
 
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null)

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { fetchProject } from '../services/api'
-import '../Transactions.css'
+import '../styles/Transactions.css'
 
 const ProjectDetail = () => {
     const { id } = useParams()

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createGoal } from '../services/api'
-import '../Create.css'
+import '../styles/Create.css'
 
 function CreateGoal() {
     const [name, setName] = useState("")

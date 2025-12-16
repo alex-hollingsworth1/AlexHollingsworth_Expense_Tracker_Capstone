@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchGoals } from '../services/api'
-import '../Transactions.css'
+import '../styles/Transactions.css'
 
 function GoalList() {
   // Filter state

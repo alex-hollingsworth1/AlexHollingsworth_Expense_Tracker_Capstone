@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { deleteProject, fetchProject } from "../services/api";
-import '../Transactions.css'
+import '../styles/Transactions.css'
 
 function DeleteProject() {
     const { id } = useParams()
