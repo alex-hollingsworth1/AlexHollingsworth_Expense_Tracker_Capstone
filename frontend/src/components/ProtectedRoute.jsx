@@ -12,7 +12,7 @@ function ProtectedRoute({children}) {
         }
     }, [isAuthenticated, loading, navigate])
 
-    if (loading) return null;
+    if (loading) return <div>Loading...</div>;
     if (!isAuthenticated) return null;
     return children;
 

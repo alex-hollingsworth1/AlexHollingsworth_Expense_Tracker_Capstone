@@ -59,9 +59,9 @@ async function apiRequest(endpoint, options = {}) {
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
 
-        // Redirect to login page
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login'
+        // Redirect to login page (route is at "/")
+        if (window.location.pathname !== '/') {
+          window.location.href = '/'
         }
 
         throw new Error('Session expired. Please login again.')

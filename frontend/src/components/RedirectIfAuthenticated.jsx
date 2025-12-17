@@ -12,7 +12,7 @@ function RedirectIfAuthenticated({children}) {
         }
     }, [isAuthenticated, loading, navigate])
 
-    if (loading) return null;
+    if (loading) return <div>Loading...</div>;
     return children;
 }
 

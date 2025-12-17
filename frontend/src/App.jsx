@@ -61,6 +61,7 @@ function App() {
       <Routes>
         {/* Authentication */}
         <Route path="/" element={<RedirectIfAuthenticated><Login/></RedirectIfAuthenticated>}/>
+        <Route path="/login" element={<RedirectIfAuthenticated><Login/></RedirectIfAuthenticated>}/>
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         
         {/* CREATE Routes */}
